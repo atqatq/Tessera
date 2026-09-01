@@ -10,7 +10,7 @@ to compliance in common cases; the binding text is the
 ## The one-line credit
 
 ```
-Powered by Tessera - https://github.com/tessera-scm/tessera
+Powered by Tessera - https://github.com/atqatq/Tessera
 ```
 
 Pick **one** visible placement (a):

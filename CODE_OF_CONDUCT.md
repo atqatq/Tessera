@@ -13,7 +13,9 @@ project is represented.
 
 ## Enforcement
 
-Report to conduct@tessera-scm.dev (private). The maintainers team reviews
+Report privately via GitHub — contact the maintainer
+([@atqatq](https://github.com/atqatq), e.g. through a private message or a
+private security advisory). The maintainers team reviews
 within 72 hours, applies the Contributor Covenant v2.1 escalation ladder
 (warning -> temp ban -> permanent ban), and publishes anonymized quarterly
 summaries. Maintainers are bound by the same rules — enforcement does not
