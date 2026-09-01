@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 430" role="img" aria-label="Tessera v0.x architecture: the inv module talks to kernel services only; the kernel owns three separate stores; a stdlib Python reference and the Rust implementation both consume the same committed conformance vectors. Items drawn with dashed borders are specified but not yet built.">
+  <!--
+    v0.x architecture, dark theme. Ink #fafafa, accent #6E96E8.
+    Solid border = in the tree today; dashed = specified, not built.
+    Dark variant of v0x-architecture-light.svg.
+  -->
+  <defs>
+    <style>
+      .ink { fill: #fafafa; }
+      .muted { fill: #a1a1aa; }
+      .chip { fill: #18181b; stroke: #3f3f46; stroke-width: 1.5; }
+      .chip-spec { fill: #09090b; stroke: #3f3f46; stroke-width: 1.5; stroke-dasharray: 4 3; }
+      .accent-chip { fill: #1b2440; stroke: #6E96E8; stroke-width: 1.5; }
+      .box { fill: #18181b; stroke: #3f3f46; stroke-width: 1.5; }
+      .flow { stroke: #6E96E8; stroke-width: 1.5; fill: none; }
+      .wire { stroke: #3f3f46; stroke-width: 1.5; fill: none; }
+      text { font-family: 'Inter', 'DejaVu Sans', sans-serif; }
+      .t-title { font-size: 17px; font-weight: 700; fill: #fafafa; }
+      .t-chip { font-size: 12.5px; fill: #f4f4f5; }
+      .t-note { font-size: 11px; fill: #71717a; }
+      .t-acc { font-size: 12.5px; fill: #3d5cb8; font-weight: 600; }
+    </style>
+    <marker id="a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#6E96E8"/>
+    </marker>
+    <marker id="g" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#a1a1aa"/>
+    </marker>
+  </defs>
+
+  <text x="36" y="42" class="t-title">What exists today — and what it touches</text>
+  <text x="36" y="62" class="t-note">solid = in the tree · dashed = specified, not built · the vectors are the contract between both implementations</text>
+
+  <!-- Modules column -->
+  <rect x="36" y="92" width="200" height="270" rx="10" class="box"/>
+  <text x="56" y="122" class="t-title" font-size="13.5">MODULES</text>
+  <rect x="56" y="140" width="160" height="44" rx="6" class="accent-chip"/>
+  <text x="68" y="159" class="t-acc">tessera-inv</text>
+  <text x="68" y="175" class="t-note">multi-echelon safety stock</text>
+  <rect x="56" y="196" width="160" height="30" rx="6" class="chip-spec"/>
+  <text x="68" y="215" class="t-chip" fill="#71717a">pln · ord · ful · … (13)</text>
+  <text x="56" y="258" class="t-note">one module is proved to</text>
+  <text x="56" y="272" class="t-note">industry depth; the rest are</text>
+  <text x="56" y="286" class="t-note">design intent, not a schedule</text>
+
+  <!-- Kernel column -->
+  <rect x="300" y="92" width="300" height="270" rx="10" class="box"/>
+  <text x="320" y="122" class="t-title" font-size="13.5">KERNEL</text>
+  <rect x="320" y="140" width="120" height="30" rx="6" class="chip"/>
+  <text x="332" y="159" class="t-chip">tessera-ids</text>
+  <rect x="452" y="140" width="128" height="30" rx="6" class="chip"/>
+  <text x="464" y="159" class="t-chip">tessera-access</text>
+  <rect x="320" y="182" width="120" height="30" rx="6" class="chip"/>
+  <text x="332" y="201" class="t-chip">tessera-ledger</text>
+  <rect x="452" y="182" width="128" height="30" rx="6" class="chip-spec"/>
+  <text x="464" y="201" class="t-chip" fill="#71717a">kernel.master_data</text>
+  <rect x="320" y="224" width="120" height="30" rx="6" class="chip-spec"/>
+  <text x="332" y="243" class="t-chip" fill="#71717a">kernel.events</text>
+  <rect x="452" y="224" width="128" height="30" rx="6" class="chip-spec"/>
+  <text x="464" y="243" class="t-chip" fill="#71717a">kernel.plugin_host</text>
+  <text x="320" y="292" class="t-note">modules require kernel services only;</text>
+  <text x="320" y="306" class="t-note">peer reads are brokered and ledger-stamped</text>
+  <text x="320" y="336" class="t-acc">14 decision codes · deny wins · default deny</text>
+
+  <!-- Stores column -->
+  <rect x="664" y="92" width="260" height="270" rx="10" class="box"/>
+  <text x="684" y="122" class="t-title" font-size="13.5">THREE STORES</text>
+  <rect x="684" y="140" width="220" height="56" rx="6" class="chip"/>
+  <text x="696" y="162" class="t-chip">ledger — what a value was</text>
+  <text x="696" y="180" class="t-note">bitemporal · per-tenant SHA-256 chain</text>
+  <rect x="684" y="208" width="220" height="44" rx="6" class="chip-spec"/>
+  <text x="696" y="229" class="t-chip" fill="#71717a">master log — who did what</text>
+  <rect x="684" y="264" width="220" height="44" rx="6" class="chip-spec"/>
+  <text x="696" y="285" class="t-chip" fill="#71717a">module logs — verbose payloads</text>
+
+  <!-- Conformance band -->
+  <rect x="36" y="368" width="888" height="44" rx="10" class="box"/>
+  <rect x="56" y="380" width="230" height="20" rx="4" class="accent-chip"/>
+  <text x="66" y="394" class="t-acc">vectors/*.json — the contract</text>
+  <text x="320" y="394" class="t-note">Python reference (stdlib-only) and Rust consume the same committed vectors, byte-identically — CI proves it</text>
+  <path d="M 300 368 L 300 356" class="wire" marker-end="url(#g)"/>
+  <path d="M 500 368 L 500 356" class="wire" marker-end="url(#g)"/>
+  <path d="M 794 368 L 794 356" class="wire" marker-end="url(#g)"/>
+
+  <!-- Module -> kernel wire, kernel -> stores wire -->
+  <path d="M 236 162 C 270 162 266 162 300 162" class="flow" marker-end="url(#a)"/>
+  <path d="M 600 162 C 636 162 628 162 664 162" class="wire" marker-end="url(#g)"/>
+</svg>

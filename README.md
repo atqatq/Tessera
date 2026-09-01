@@ -1,198 +1,109 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="brand/mark-dark.svg">
+  <img src="brand/mark-light.svg" alt="The Tessera mark: a 2×2 mosaic with three tiles set and one outlined — the tile being placed" width="64" align="left">
+</picture>
+
 # Tessera
 
-**A kernel-and-module supply chain operating system, aligned with the SCOR
-reference model.** One AI-native kernel orchestrating fourteen pluggable
-modules — from retail to pharma to chemicals — with a permission engine
-that assumes nobody is trusted, an append-only ledger for everything that
-happens, and a grid that lets companies share select data without ever
-sharing trust. One spine at any scale: the same system runs a global
-enterprise and a two-person shop, with every capability scoped to the
-tenant it serves.
+**One supply chain kernel. Real recommendations you can audit, from
+inventory to contracts, without giving up control of your data.**
 
-![license](https://img.shields.io/badge/license-Apache--2.0-blue)
-![rust](https://img.shields.io/badge/core-rust-dea584)
-![python](https://img.shields.io/badge/reference-python-3670A0)
-![PRs](https://img.shields.io/badge/PRs-welcome-6E96E8)
+Status: **the kernel is real and tested** — the permission engine, the
+hash-chained ledger, typed identifiers, the `inv` safety-stock core,
+and a Python reference that must agree byte-for-byte (63 Rust tests,
+7 reference tests, conformance vectors). **Everything else in the docs
+is specified, not built** — the table below does not lie.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/v0x-architecture-dark.svg">
+  <img src="docs/diagrams/v0x-architecture-light.svg" alt="v0.x architecture: the inv module talks only to kernel services; the kernel owns three separate stores (bitemporal ledger, master log, module logs); the stdlib Python reference and the Rust implementation both consume the same committed conformance vectors. Dashed borders mark specified-but-not-built parts." width="820">
+</picture>
+
+<details>
+<summary>Design intent — the full kernel-and-modules picture (specified, not built)</summary>
+
+The fourteen-module vision — PLAN to CONNECTORS, the adaptive spine,
+the inter-company grid — lives in [docs/](docs/) and the
+[system diagram](docs/diagrams/tessera-system-architecture.svg). It is
+design intent. [ROADMAP.md](ROADMAP.md) explains what is scheduled and
+what is not.
+</details>
 
 ---
 
-## The picture
+## What exists today
 
-The canonical system diagram — the **software development view**: kernel
-workspace, module crates, schemas, conformance, CI — lives at
-[`docs/diagrams/tessera-system-architecture.svg`](docs/diagrams/tessera-system-architecture.svg)
-(a PNG sits alongside it).
+| Component | State | Where |
+|---|---|---|
+| Typed identifiers (`TenantId`, `ModuleId`, …) | **built + tested** | `kernel/ids` |
+| Permission engine — 5 layers, 14 decision codes, deny wins | **built + tested** | `kernel/access` |
+| Ledger — per-tenant SHA-256 chains, append-only, idempotent replay | **built + tested** | `kernel/ledger` |
+| `inv` core — multi-echelon safety stock under staged service levels | **built + tested** | `modules/inv` |
+| Python reference + conformance vectors (byte-identical contract) | **built + tested** | `reference/python` |
+| CI: fmt/clippy/test, MSRV, platform matrix, coverage, DCO, secrets, supply chain | **in tree** | `.github/workflows` |
+| ADRs 0001–0009, RFC process, governance, security policy | **in tree** | `docs/`, root |
+| Master data, event bus, plugin host, ingest, grid, agents | **specified only** | `docs/`, ROADMAP |
 
-- **The Kernel** is the AI-native control plane and single source of truth.
-  Modules never talk to each other directly — every peer access is brokered,
-  permission-checked, and ledger-stamped by the kernel.
-- **Modules** are pluggable domain engines (PLAN, SOURCE, TRANSFORM, ORDER,
-  CRM, FULFILL, RETURN, INVENTORY, SUPPLIERS, CONTRACTS, FINANCE, TASKS,
-  PROJECTS, CONNECTORS). Each ships industry-standard depth, its own agent,
-  its own dashboard/KPIs, multi-tenancy with local currency + USD reserve,
-  native IoT telemetry, and can be paused, stopped, or updated independently.
-- **The Grid** is the inter-company layer above it all: external kernels and
-  modules exchange *select* data through signed sharing contracts — consent-
-  scoped, policy-gated, revocable, notarized. Writes never cross a boundary;
-  changes travel as requests a human accepts.
+## The module being proved: `inv`
 
-## Why it exists
+Multi-echelon safety stock under staged service levels — the real
+algorithm supply chains argue about, pinned by conformance vectors
+*before* the implementation, including the edge cases (zero demand,
+negative lead time, single echelon, service level at 0 and at 1).
+The vectors are the specification; the Python reference and the Rust
+implementation must both reproduce them byte-for-byte.
 
-Supply chain software today forces a terrible trade: buy an enterprise suite
-that assumes you have 10,000 SKUs and a systems-integration budget, or bolt
-together spreadsheets and hope. Tessera refuses the trade. The same spine
-runs a global manufacturer and a two-person workshop — the **adaptive spine**
-morphs entities, flows, KPIs, and terminology to the tenant during setup, and
-every capability **scopes to tenant size**. One codebase, one set of
-guarantees, a proportionate surface for every tenant.
+## The invariants
 
-## Core concepts
+Deny always wins. Nothing is visible before its `valid_time`. The
+ledger never rewrites history. Every deviation from a recommendation
+leaves a record. Each one has a test that fails when violated — the
+map is [docs/TESTING.md](docs/TESTING.md), and docs that cannot drift
+are the only docs that stay true.
 
-### Kernel services (the only names a hard `requires` may contain)
-
-| Service | Responsibility |
-|---|---|
-| `kernel.origin` | superuser identity above root — hardware key + threshold signature, no passwords, intent logged before effect |
-| `kernel.access` | five-layer permission engine (below) |
-| `kernel.master_data` | bitemporal master data, custom columns/types, expression DSL |
-| `kernel.ingest` | CSV / XLSX / API framework / IoT-MQTT edge, dead-letter quarantine |
-| `kernel.ledger` | what a value was — bitemporal, hash-chained per tenant |
-| `kernel.events` | message bus, 1,000,000 msg/sec duplex to every module |
-| `kernel.plugin_host` | module lifecycle: install, pause, stop, update, archive |
-| `kernel.tenancy` | tenants, accounts, roles registry (AUD/TNA/RSK + per-module roles) |
-| `kernel.ai_core` | leader agent (AIL), signal ranking, task/proposal routing |
-| `kernel.agents` | user-defined agent runtime — MCP + REST API, sandboxed, scoped |
-| `kernel.grid` | inter-company sharing: parties, relationships, contracts |
-| `kernel.notary` | anchor-never-store Merkle notarization (swappable providers) |
-
-### The fourteen modules
-
-| Code | Module | Echelon | Agent tier | Standard depth highlights | Native IoT telemetry |
-|---|---|---|---|---|---|
-| `pln` | PLAN | core | advise | MRP · MPS · ML demand forecasting · supply design & planning · S&OP/S&OE | POS & shelf sensors, weather feeds |
-| `src` | SOURCE | core | advise | strategic sourcing · RFx · PO lifecycle · 3-way match handoff | inbound GPS, gate scans, cold-chain probes |
-| `trf` | TRANSFORM | core | act | MES · finite-capacity scheduling · BOM/where-used · SPC · OEE | line PLCs, OEE counters, vision QA |
-| `ord` | ORDER | core | advise | OMS · ATP/CTP promising · order-to-cash · allocation | e-comm & POS event streams |
-| `crm` | CRM | ext | advise | customer 360 · pipeline & quotes · service SLAs · churn/CLV models | connected-product telemetry, app events |
-| `ful` | FULFILL | core | act | WMS · TMS · wave planning · route optimization · OTIF | fleet GPS, geo-fences, cold-chain probes |
-| `ret` | RETURN | core | advise | RMA · reverse logistics · disposition · warranty & recovery | smart RMA kiosks, return-drop scans |
-| `inv` | INVENTORY | ext | act | multi-echelon optimization · ABC/XYZ · cycle counts | RFID, smart shelves, drone counts |
-| `srm` | SUPPLIERS | ext | advise | qualification · scorecards · OTIF/PPM · risk monitoring | supplier port telemetry, cert feeds |
-| `ctr` | CONTRACTS | ext | observe | bitemporal terms · sole writer of `ctr.commercial_terms` · SLAs | usage meters, SLA probes, e-sign pads |
-| `fin` | FINANCE | ext | advise | costing & landed cost · cash-to-cash · AP/AR · FX & tax engines | POS terminals, metered-usage events |
-| `tsk` | TASKS | ext | advise | push target of every module · SLAs · escalation evidence | shop-floor badges, wearable pings |
-| `prj` | PROJECTS | ext | advise | portfolio · critical path · budgets · stage gates | site sensors, asset & crew trackers |
-| `net` | CONNECTORS | ext | act | ERP connectors (SAP/Oracle/NetSuite) · idempotent replay | edge agent fleet, device shadows |
-
-Every module: plugin lifecycle (`pause / stop / update`), own dashboard + KPIs,
-own module log, multi-tenant with local FX + USD reserve, and **external
-egress** — it may expose *select* data to external kernels & modules through the
-grid. One spine at any scale: every capability scopes to tenant size.
-
-### Five-layer permission engine (deny wins everywhere)
-
-```
-L-1  party boundary      no relationship + signed sharing contract -> no disclosure
-L0  module state          a disabled module gates all — even ORIGIN re-enables first
-L1  agent tier           observe -> advise -> act (allowlist + ORIGIN approval)
-L2  module grant          module-to-module reads only, granted by ORIGIN, never writes
-L3  column role          glob rules down to the column; unknown column = deny
-```
-
-Passing L-1 grants nothing: the request re-enters L0–L3 inside the owning
-company. ORIGIN bypasses L2/L3 only — never L0, never the ledger, never an
-agent.
-
-### Agents, built-in and bring-your-own
-
-- Every module carries a **serious domain agent** — it runs its module's craft
-  (STEERS THE LINE, REBALANCES STOCK, CLOSES THE LOOP), bounded by its L1
-  tier. It signals up to the leader AI **and briefs module users** scoped by
-  role: dashboards, alerts, briefs.
-- The **leader agent (AIL)** correlates across modules, ranks on severity ·
-  evidence quality · corroboration, and raises tasks & proposals — never
-  commands. No agent holds ORIGIN. Leader agents never talk to each other.
-- **Bring your own agents**: register user-defined agents via **MCP** or the
-  **REST API** — sandboxed, policy-scoped, audited like any actor.
-
-### IoT, native — not bolted on
-
-Every module declares its meaningful telemetry (see table). `kernel.ingest`
-accepts MQTT/edge streams with store-and-forward buffers, a device registry,
-and device shadows; every arrival is a master-log entry.
-
-### The grid & external egress
-
-Any module may expose **select data** to **external kernels and modules** — beyond
-kernel & peer grants. Exposure is contract-shaped: versioned sharing contracts,
-signed by both parties, notarized, one clause per field + direction, with
-exact/banded/aggregate granularity and default opacity. Revocation is
-retroactive. Benchmarking publishes p10/p50/p90 + party count only
-(k-anonymity, k = 5; no party above ~1/3 of a sample).
-
-## Quickstart
+## Run it
 
 ```bash
 git clone https://github.com/atqatq/Tessera.git
-cd tessera
-docker compose up          # kernel + postgres + bus + plugin host (dev profile)
-open http://localhost:8080 # setup wizard = the adaptive spine
+cd Tessera
+make setup   # Rust toolchain (pinned) + editable Python reference
+make test    # full suite: cargo test + reference unittests
 ```
 
-Reference CLI (python):
+That is the whole onboarding. A clean machine reaches a passing suite
+in under two minutes (measured; the README and CI agree — every
+command on this page is executed by CI, and CI fails if an untested
+command appears here).
 
-```bash
-pip install -e reference/python
-tessera init --tenant demo --blueprint retail
-tessera module list
-tessera ingest csv ./demo/orders.csv --into ord
-```
+<details>
+<summary>Terminal session</summary>
+The recording's source is committed at <a href="docs/assets/demo.tape">docs/assets/demo.tape</a> and regenerates with <code>vhs</code>.
+</details>
 
-## Repository layout
+## Why this design
 
-```
-kernel/                 rust workspace: kernel services (origin, access, ledger, ...)
-modules/              one crate per module (pln, src, trf, ord, crm, ful, ret,
-                     inv, srm, ctr, fin, tsk, prj, net)
-agents/              built-in module agents + leader agent (AIL)
-sdk/                 MCP + REST client SDKs, plugin API
-reference/python     executable spec & conformance vectors
-schemas/             manifest.schema.json, sharing-contract, signals
-docs/                architecture docs + canonical diagrams
-.github/             CI, issue & PR templates
-```
-
-The repo is **docs-first**: the layout above is the target shape. Code
-directories land after the design freeze (see [ROADMAP.md](ROADMAP.md)).
-
-## Roadmap — next module candidates
-
-Voted on per minor release; details in [ROADMAP.md](ROADMAP.md). Current
-shortlist:
-
-1. **AFTERMARKET** — service parts, warranties, field service, install-base lifecycle
-2. **SUSTAIN** — emissions, circularity, supplier ESG scoring
-3. **WORKFORCE** — labor planning, shift capacity, skills & certifications feeding TASKS and PROJECTS
-
-(COMPLIANCE, ASSETS, and PRODUCT remain on the longer backlog.)
-
-Propose your own via [feature template](.github/ISSUE_TEMPLATE/feature_request.md).
+[ADRs 0001–0009](docs/adr/) record the decisions and their costs:
+star-not-mesh, three separate stores, bitemporal everything, deny-wins
+permissions, vectors as the contract, and cryptography only from
+audited crates. [GOVERNANCE.md](GOVERNANCE.md) states who decides and
+what happens if the maintainer stops.
 
 ## Contributing
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md). Vector-first: behavior changes ship
-with conformance vectors. Design tokens: monotone zinc + exactly one accent.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) — it walks the actual
+red-green-refactor cycle this codebase went through, gates included.
+Kernel invariant changes start as an RFC
+([process](docs/RFC_PROCESS.md)). The
+[Code of Conduct](CODE_OF_CONDUCT.md) is enforced; security issues go
+to [SECURITY.md](SECURITY.md), never to public issues.
 
-## License
+## Legal posture, in one breath
 
-Plain [Apache-2.0](LICENSE) — no added conditions, no appendix. That is
-the point: SPDX scanners classify it, corporate legal approves it in an
-afternoon, and Apache-2.0's §3 patent grant protects users and
-downstream infrastructures alike (see [LICENSING.md](LICENSING.md) for
-the plain-language patent position).
-
-The **name** "Tessera" is protected by [TRADEMARK.md](TRADEMARK.md),
-not by the licence: nominative use ("built with Tessera",
-"Tessera-compatible") is always permitted; forks rename. Third-party
-dependencies and vendored assets are listed in
-[THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
+Plain [Apache-2.0](LICENSE) — no added conditions, so SPDX scanners
+classify it and legal teams approve it in an afternoon; the §3 patent
+grant and its retaliation clause protect downstream infrastructure
+([plain language](LICENSING.md)). Contributions arrive under the DCO,
+not a CLA. The **name** is a trademark, not a licence condition
+([TRADEMARK.md](TRADEMARK.md)): say "built with Tessera" freely; forks
+rename. OpenSSF Scorecard runs on every push to `main` and its badge
+reports what is, not what is hoped.
