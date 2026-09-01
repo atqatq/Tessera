@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Tessera mark: three tiles set in a mosaic, one tile being placed">
+  <!--
+    The Tessera mark: a 2x2 mosaic. Three tiles are set; the fourth is
+    drawn as an outline — the tile being placed, the one thing each
+    participant contributes. Pure geometry, one colour, legible at 16px.
+    (Dark variant: ink #fafafa. Accent variant: #6E96E8.)
+  -->
+  <g fill="#18181b">
+    <rect x="2" y="2" width="13" height="13" rx="2.5"/>
+    <rect x="17" y="2" width="13" height="13" rx="2.5"/>
+    <rect x="2" y="17" width="13" height="13" rx="2.5"/>
+  </g>
+  <rect x="18.75" y="18.75" width="9.5" height="9.5" rx="2.5" fill="none" stroke="#18181b" stroke-width="2.5"/>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Tessera mark, dark theme: three tiles set in a mosaic, one tile being placed">
+  <!-- Dark variant of mark-light.svg: ink swapped for near-white. -->
+  <g fill="#fafafa">
+    <rect x="2" y="2" width="13" height="13" rx="2.5"/>
+    <rect x="17" y="2" width="13" height="13" rx="2.5"/>
+    <rect x="2" y="17" width="13" height="13" rx="2.5"/>
+  </g>
+  <rect x="18.75" y="18.75" width="9.5" height="9.5" rx="2.5" fill="none" stroke="#fafafa" stroke-width="2.5"/>
+</svg>
