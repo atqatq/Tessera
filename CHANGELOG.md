@@ -7,6 +7,25 @@ crates stabilise).
 ## [Unreleased]
 
 ### Added
+- The one complete red-green-refactor cycle: `tessera-inv` —
+  multi-echelon safety stock under staged service levels, vectors
+  written first (12 cases incl. refusals and the pinned explainer),
+  both implementations byte-identical on first contract run.
+- The operator model (`docs/OPERATOR_MODEL.md`) + ADR-0010 (structure
+  configurable, method not) + ADR-0011 (out-of-tree trust boundary) +
+  ADR-0012 (ORIGIN delegation, specified with pending vectors).
+- Module manifest schema v1 frozen + plugin API contract + module
+  template + manifest conformance vectors.
+- Collaboration machinery: failing-test bug template, ten staged
+  good-first-issues, MAINTAINERS/ADOPTERS/RELEASES/SUPPORT, CoC with
+  external escalation, labels as code, "Your first PR" cycle.
+- Docs site (mdBook, Diátaxis) with why/why-not pages, og:image, and
+  self-hosted brand fonts; brand mark + tokens as the single source
+  of truth.
+- CI: Dependabot, docs build + link check + Pages deployment; every
+  action pinned to a peeled commit SHA.
+
+### Added
 - Engineering gates as workspace lints: `forbid(unsafe_code)`,
   `deny(missing_docs)`, input-path denial of `unwrap`/`expect`/`panic`/
   `todo`; pinned toolchain; MSRV 1.85; cargo-deny allowlist.
@@ -38,6 +57,21 @@ crates stabilise).
   in the tree, the gates check the code.
 - CONTRIBUTING documents the actual red-green-refactor cycle from this
   codebase, including the design flaw the properties caught.
+- ROADMAP cut to v0.x = `inv` + the minimum kernel; the other thirteen
+  modules moved to "design intent, not scheduled"; the v0.1 success
+  criterion is a committed, deliberately failing end-to-end test.
+- The federation story now rides existing standards: IDSA DSP for
+  negotiation/transfer, ODRL for policy, GS1 EPCIS 2.0/CBV for
+  boundary events, EDI/GS1 identifiers for ingest; notarisation
+  demoted to an optional appendix (Grid EOL 2023, Sawtooth archived
+  2024) with the no-notary guarantee pinned in the e2e criterion.
+- Unearned claims swept: the 1,000,000 msg/sec bus number, the
+  "fourteen modules ship in-tree" sentence, and every docker/pip
+  command that could not run are gone or honestly downgraded to
+  design intent.
+- README is a landing page: hero with the mark, built-vs-specified
+  status, live-only badges, v0.x architecture in light/dark with alt
+  text, a repository map, and only CI-executed commands.
 
 ### Removed
 - The "Tessera naming requirement" appendix from `LICENSE` and

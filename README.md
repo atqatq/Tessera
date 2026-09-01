@@ -89,6 +89,24 @@ permissions, vectors as the contract, and cryptography only from
 audited crates. [GOVERNANCE.md](GOVERNANCE.md) states who decides and
 what happens if the maintainer stops.
 
+## Repository map
+
+| Path | What lives there |
+|---|---|
+| [`kernel/`](kernel/) | the tested kernel crates: `tessera-ids`, `tessera-access`, `tessera-ledger` |
+| [`modules/inv`](modules/inv/) | the one proved module: multi-echelon safety stock |
+| [`reference/python`](reference/python/) | the stdlib-only executable spec + the conformance vectors |
+| [`schemas/`](schemas/) | the frozen module manifest schema v1 + the plugin API contract |
+| [`docs/adr/`](docs/adr/) | ADRs 0001–0012 + the RFC template |
+| [`docs/site`](docs/site/) | this project's documentation site (Diátaxis) |
+| [`docs/backlog/good-first-issues/`](docs/backlog/good-first-issues/) | ten curated, genuinely good first issues |
+| [`brand/`](brand/) + [`BRAND.md`](BRAND.md) | the mark, tokens, fonts, usage rules |
+| [`templates/module/`](templates/module/) | a conformant starting point for third-party modules |
+| [`GOVERNANCE.md`](GOVERNANCE.md), [`MAINTAINERS.md`](MAINTAINERS.md), [`ADOPTERS.md`](ADOPTERS.md) | who decides, who maintains, who uses |
+| [`LICENSING.md`](LICENSING.md), [`TRADEMARK.md`](TRADEMARK.md) | patents/DCO/third-party policy; the name |
+| [`RELEASES.md`](RELEASES.md), [`SUPPORT.md`](SUPPORT.md) | cadence + deprecation; where to ask |
+| [`docs/OPERATOR_MODEL.md`](docs/OPERATOR_MODEL.md) | the competence thesis |
+
 ## Contributing
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) — it walks the actual
