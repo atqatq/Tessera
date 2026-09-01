@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 # Least privilege by default (also what OpenSSF Scorecard checks).
 permissions:
