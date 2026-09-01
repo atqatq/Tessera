@@ -1,7 +1,7 @@
 ---
 name: Feature / new module proposal
 about: Propose a capability or a new module
-labels: ["enhancement"]
+labels: ["needs-design"]
 ---
 
 **Kind** — capability on an existing module / new module / kernel service / other:
@@ -15,3 +15,6 @@ labels: ["enhancement"]
 **IoT / egress implications** (telemetry? externally shared fields?):
 
 **Conformance vectors you would accept as "done"**:
+
+> Kernel invariant touched? Then this starts as an RFC, not a feature
+> request — see [the RFC process](../../site/src/RFC_PROCESS.md).

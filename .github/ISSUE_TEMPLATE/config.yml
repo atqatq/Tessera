@@ -2,4 +2,10 @@ blank_issues_enabled: false
 contact_links:
   - name: Security disclosure
     url: https://github.com/atqatq/Tessera/security/advisories/new
-    about: Please report vulnerabilities privately (see SECURITY.md).
+    about: Please report vulnerabilities privately (see SECURITY.md). Never in public issues.
+  - name: Questions and ideas
+    url: https://github.com/atqatq/Tessera/discussions
+    about: Use Discussions for "how do I" and "what if" — issues are for tracked work.
+  - name: Code of Conduct
+    url: https://github.com/atqatq/Tessera/blob/main/CODE_OF_CONDUCT.md
+    about: Applies to every interaction space of this project, with a named enforcement contact.

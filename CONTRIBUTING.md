@@ -56,6 +56,56 @@ A worked cycle from this codebase (`kernel/access`):
   hold across all inputs; conformance vectors where the Python
   reference must agree. The full map lives in [docs/TESTING.md](docs/site/src/TESTING.md).
 
+
+## Your first PR — one full cycle
+
+This walks a real change end to end: `make setup` through a red test
+to a merged PR. Budget: about an hour the first time.
+
+1. **Set up** (`make setup`) and prove the suite green (`make test`).
+2. **Pick a change small enough to finish.** The list in
+   [`docs/backlog/good-first-issues/`](docs/backlog/good-first-issues/)
+   is curated for exactly this; each one states its acceptance
+   criteria.
+3. **Branch** (`git checkout -b docs/gfi-04-subject-role-roundtrip`).
+4. **Write the failing test first.** For example, extending an
+   existing roundtrip property to cover `SubjectId`/`RoleId`:
+   change the proptest, run `cargo test -p tessera-ids`, and watch it
+   fail — that failure is your red, and it must fail for the reason
+   you expect (read the assertion message).
+5. **Green — minimum change.** Implement only what the test demands.
+6. **Gates:** `make check` — fmt, clippy `-D warnings`, the full
+   suite, vector freshness. If you touched behaviour the vectors pin,
+   regenerate them and explain the diff in the commit message.
+7. **Commit** with a Conventional Commit that explains *why*, signed
+   off: `git commit -s`. Unsigned commits fail the DCO gate; note that
+   commits do **not** need to be cryptographically signed — branch
+   protection enforces signed commits on `main` at merge time, and the
+   maintainer signs the merge.
+8. **Open the PR** against `main`. Use the template; tick what you
+   actually did. CI runs the same gates you ran; green on both sides
+   is the review request.
+9. **Review.** A maintainer (or reviewer) responds — questions are
+   normal, requests to re-run gates are normal, "the test you wrote
+   changed during refactor" is not allowed to anyone, including you.
+
+That is the whole loop. Everything else in this document is the same
+loop with sharper edges.
+
+## Triage labels
+
+`good-first-issue` (scoped, real, reachable), `help-wanted`
+(maintainer capacity is the constraint), `needs-design` (RFC or
+proposal first). The set lives in
+[`.github/labels.yml`](.github/labels.yml); new areas get a label in
+the same PR that creates the area.
+
+## Community channels
+
+- **Discussions** for questions and ideas (issues are tracked work).
+- Response times are honestly stated in SUPPORT.md — this project has
+  one maintainer today, and pretending otherwise helps nobody.
+
 ## Gates (enforced before every commit)
 
 ```bash

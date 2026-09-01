@@ -1,0 +1,42 @@
+# Triage labels — the set this project commits to
+#
+# GitHub has no native label-as-code; this file is the source of truth
+# and is kept in sync with:
+#   gh api repos/atqatq/Tessera/labels --paginate   (audit)
+#   scripts/sync_labels.sh                          (apply; maintainer)
+# A label used by a template or a good-first-issue must exist here.
+
+labels:
+  - name: bug
+    color: "C84B41"
+    description: Something behaves contrary to spec.
+  - name: needs-design
+    color: "6E96E8"
+    description: Needs an RFC or a proposal before work starts.
+  - name: good-first-issue
+    color: "4F8A5B"
+    description: Scoped, real, and reachable from a fresh clone — see docs/backlog/good-first-issues/.
+  - name: help-wanted
+    color: "4F8A5B"
+    description: Maintainer capacity is the constraint; community help genuinely unblocks this.
+  - name: area-access
+    color: "3f3f46"
+    description: kernel/access or the Python access reference.
+  - name: area-ledger
+    color: "3f3f46"
+    description: kernel/ledger or the Python ledger reference.
+  - name: area-ids
+    color: "3f3f46"
+    description: kernel/ids.
+  - name: area-inv
+    color: "3f3f46"
+    description: modules/inv — safety stock.
+  - name: area-conformance
+    color: "3f3f46"
+    description: The Python reference, vector generator, or vector files.
+  - name: area-docs
+    color: "3f3f46"
+    description: Documentation site, README, guides.
+  - name: area-ci
+    color: "3f3f46"
+    description: Workflows, gates, developer experience.
