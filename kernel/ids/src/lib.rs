@@ -215,6 +215,19 @@ mod tests {
     }
 
     #[test]
+    fn epoch_ms_display_is_the_raw_milliseconds() {
+        // Mutation evidence: the Display body survived "replace with
+        // Ok(Default::default())" — nothing pinned its output. This is
+        // the pin: the rendered form is exactly the wrapped millisecond
+        // value, with no decoration and no silent empty render.
+        assert_eq!(EpochMs::new(0).to_string(), "0");
+        assert_eq!(
+            EpochMs::new(1_700_000_000_000).to_string(),
+            "1700000000000"
+        );
+    }
+
+    #[test]
     fn validate_counts_characters_not_bytes() {
         // 'é' is invalid anyway, but a 64-char id with multibyte input
         // must not trip the length check before the character check.
