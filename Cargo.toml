@@ -2,7 +2,7 @@
 resolver = "2"
 # Members land as their TDD cycles complete; each crate adds itself in its
 # own commit so the workspace is green at every point in history.
-members = ["kernel/ids", "kernel/access"]
+members = ["kernel/ids", "kernel/access", "kernel/ledger"]
 exclude = ["reference"]
 
 [workspace.package]
