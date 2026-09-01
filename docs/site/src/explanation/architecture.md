@@ -1,6 +1,6 @@
 # Architecture
 
-The canonical diagram: [tessera-system-architecture.svg](diagrams/tessera-system-architecture.svg)
+The canonical diagram: [tessera-system-architecture.svg](../assets/tessera-system-architecture.svg)
 (rendered in the repo root README).
 
 ## Topology

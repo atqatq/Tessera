@@ -1,8 +1,7 @@
 # The Adaptive Spine
 
-The kernel's setup superpower: the system is industry- and niche-agnostic, and
-the spine morphs it to *your* supply chain during onboarding — like a spine
-the whole organism hangs on.
+The kernel's setup capability: the system is industry- and niche-agnostic, and
+the spine morphs it to *your* supply chain during onboarding — a spine the whole organism hangs on.
 
 ## First-class, not a wizard bolted on
 

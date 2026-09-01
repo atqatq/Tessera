@@ -1,0 +1,25 @@
+[book]
+title = "Tessera"
+authors = ["The Tessera Project"]
+description = "A supply chain kernel with audited recommendations — the documentation, by Diátaxis."
+src = "src"
+language = "en"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "coal"
+edit-url-template = "https://github.com/atqatq/Tessera/edit/main/{path}"
+site-url = "/Tessera/"
+git-repository-url = "https://github.com/atqatq/Tessera"
+git-repository-icon = "fa-github"
+additional-css = ["src/site.css"]
+theme = "theme"
+additional-js = []
+
+[output.html.search]
+enable = true
+boost-hierarchy = 2
+
+[build]
+build-dir = "book"
+create-missing = false

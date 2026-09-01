@@ -6,7 +6,7 @@ hard rules about who may do what.
 ## Built-in: module agents
 
 Every module ships a **serious domain operator** — not a chat wrapper. It
-runs its module's craft (see docs/MODULES.md): TRANSFORM's agent steers the
+runs its module's craft (see modules.md): TRANSFORM's agent steers the
 line within finite-capacity rules; INVENTORY's agent rebalances stock
 under MEIO policy; FINANCE's agent closes the loop on costing. Agents are
 bounded by their L1 tier:

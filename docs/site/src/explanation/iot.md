@@ -5,7 +5,7 @@ IoT is not an integration; it is a declared property of every module.
 ## Per-module telemetry
 
 Every module's manifest declares the telemetry that is *meaningful* to its
-domain (a full table in docs/MODULES.md):
+domain (a full table in modules.md):
 
 | Module | Telemetry |
 |---|---|

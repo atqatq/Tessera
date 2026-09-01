@@ -15,7 +15,7 @@ contract — starts as an RFC, modelled on the Rust RFC process.
 
 ## Process
 
-1. Copy `docs/adr/rfc-template.md` to `docs/rfc/NNNN-title.md`.
+1. Copy [`docs/adr/rfc-template.md`](https://github.com/atqatq/Tessera/blob/main/docs/adr/rfc-template.md) to `docs/rfc/NNNN-title.md`.
 2. Open a PR with the RFC; discussion happens on the PR, in the open.
 3. After feedback settles, the maintainer accepts, rejects, or defers
    with reasons recorded in the file itself.

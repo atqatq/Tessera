@@ -15,8 +15,8 @@ and a Python reference that must agree byte-for-byte (63 Rust tests,
 is specified, not built** — the table below does not lie.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/v0x-architecture-dark.svg">
-  <img src="docs/diagrams/v0x-architecture-light.svg" alt="v0.x architecture: the inv module talks only to kernel services; the kernel owns three separate stores (bitemporal ledger, master log, module logs); the stdlib Python reference and the Rust implementation both consume the same committed conformance vectors. Dashed borders mark specified-but-not-built parts." width="820">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/site/src/assets/v0x-architecture-dark.svg">
+  <img src="docs/site/src/assets/v0x-architecture-light.svg" alt="v0.x architecture: the inv module talks only to kernel services; the kernel owns three separate stores (bitemporal ledger, master log, module logs); the stdlib Python reference and the Rust implementation both consume the same committed conformance vectors. Dashed borders mark specified-but-not-built parts." width="820">
 </picture>
 
 <details>
@@ -24,7 +24,7 @@ is specified, not built** — the table below does not lie.
 
 The fourteen-module vision — PLAN to CONNECTORS, the adaptive spine,
 the inter-company grid — lives in [docs/](docs/) and the
-[system diagram](docs/diagrams/tessera-system-architecture.svg). It is
+[system diagram](docs/site/src/assets/tessera-system-architecture.svg). It is
 design intent. [ROADMAP.md](ROADMAP.md) explains what is scheduled and
 what is not.
 </details>
@@ -58,7 +58,7 @@ implementation must both reproduce them byte-for-byte.
 Deny always wins. Nothing is visible before its `valid_time`. The
 ledger never rewrites history. Every deviation from a recommendation
 leaves a record. Each one has a test that fails when violated — the
-map is [docs/TESTING.md](docs/TESTING.md), and docs that cannot drift
+map is [docs/site/src/TESTING.md](docs/site/src/TESTING.md), and docs that cannot drift
 are the only docs that stay true.
 
 ## Run it

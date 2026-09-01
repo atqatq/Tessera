@@ -54,7 +54,7 @@ A worked cycle from this codebase (`kernel/access`):
   Sentence names let a test failure tell you which behaviour broke.
 - Unit tests for pure logic; `proptest` for every invariant that must
   hold across all inputs; conformance vectors where the Python
-  reference must agree. The full map lives in [docs/TESTING.md](docs/TESTING.md).
+  reference must agree. The full map lives in [docs/TESTING.md](docs/site/src/TESTING.md).
 
 ## Gates (enforced before every commit)
 
@@ -90,7 +90,7 @@ crashing test is a signal.
 
 Anything touching a kernel invariant, the frozen module manifest
 schema, or a kernel dependency starts as an RFC:
-[docs/RFC_PROCESS.md](docs/RFC_PROCESS.md). Structural decisions
+[docs/RFC_PROCESS.md](docs/site/src/RFC_PROCESS.md). Structural decisions
 graduate into ADRs ([docs/adr/](docs/adr/)).
 
 ## Adding a module — checklist
