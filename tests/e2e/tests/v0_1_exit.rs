@@ -65,7 +65,10 @@ fn a_stranger_gets_a_recommendation_and_can_read_its_ledger_entry() {
     // the recommendation: safety stock under staged service levels
     let rec = tessera(&["inv", "recommend", "--tenant", "acme"]);
     for echelon in ["store-1", "store-2", "dc"] {
-        assert!(rec.contains(echelon), "recommendation must cover {echelon}: {rec}");
+        assert!(
+            rec.contains(echelon),
+            "recommendation must cover {echelon}: {rec}"
+        );
     }
     // every recommendation carries its method and assumptions (E2.3)
     assert!(
@@ -74,8 +77,18 @@ fn a_stranger_gets_a_recommendation_and_can_read_its_ledger_entry() {
     );
 
     // the override loop: an override is free but never silent (E2.4)
-    tessera(&["inv", "override", "--tenant", "acme", "--echelon", "dc",
-              "--safety-stock", "200", "--reason", "supplier moq"]);
+    tessera(&[
+        "inv",
+        "override",
+        "--tenant",
+        "acme",
+        "--echelon",
+        "dc",
+        "--safety-stock",
+        "200",
+        "--reason",
+        "supplier moq",
+    ]);
 
     // the ledger entry recording the recommendation exists and verifies
     let ledger = tessera(&["ledger", "read", "--tenant", "acme"]);

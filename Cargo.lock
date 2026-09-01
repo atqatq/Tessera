@@ -411,6 +411,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "tessera-inv"
+version = "0.1.0"
+dependencies = [
+ "proptest",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "tessera-ledger"
 version = "0.1.0"
 dependencies = [
