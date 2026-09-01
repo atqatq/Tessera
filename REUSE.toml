@@ -1,0 +1,30 @@
+# REUSE (https://reuse.software, SPDX v3) — machine-checked by CI.
+# Every file in this repository is Apache-2.0 unless a more specific
+# annotation below applies. Add an annotation for vendored third-party
+# assets here, and a row in THIRD_PARTY_LICENSES.md.
+
+version = 1
+
+[[annotations]]
+path = ["**/*"]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 The Tessera Project"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["LICENSE"]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 The Tessera Project"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["Cargo.lock"]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 The Tessera Project"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["reference/python/vectors/**"]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 The Tessera Project"
+SPDX-License-Identifier = "CC0-1.0"
