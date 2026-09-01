@@ -1,0 +1,221 @@
+{
+  "$comment": "Language-neutral conformance vectors for the hub expression DSL. Any implementation claiming conformance must reproduce every expectation exactly. Amounts are decimal strings, never floats.",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "arith-precedence",
+      "expression": "2 + 3 * 4",
+      "env": {},
+      "expect": { "kind": "number", "amount": "14" }
+    },
+    {
+      "id": "arith-parens",
+      "expression": "(2 + 3) * 4",
+      "env": {},
+      "expect": { "kind": "number", "amount": "20" }
+    },
+    {
+      "id": "decimal-not-binary-float",
+      "expression": "0.1 + 0.2",
+      "env": {},
+      "expect": { "kind": "number", "amount": "0.3" }
+    },
+    {
+      "id": "null-propagates-through-arithmetic",
+      "expression": "a + 1",
+      "env": { "a": { "kind": "null" } },
+      "expect": { "kind": "null" }
+    },
+    {
+      "id": "null-propagates-through-comparison",
+      "expression": "a > 1",
+      "env": { "a": { "kind": "null" } },
+      "expect": { "kind": "null" }
+    },
+    {
+      "id": "coalesce-picks-first-non-null",
+      "expression": "coalesce(a, b, 5)",
+      "env": { "a": { "kind": "null" }, "b": { "kind": "null" } },
+      "expect": { "kind": "number", "amount": "5" }
+    },
+    {
+      "id": "and-short-circuits-on-false",
+      "expression": "false and undefined_field",
+      "env": {},
+      "expect": { "kind": "bool", "value": false }
+    },
+    {
+      "id": "or-short-circuits-on-true",
+      "expression": "true or undefined_field",
+      "env": {},
+      "expect": { "kind": "bool", "value": true }
+    },
+    {
+      "id": "if-does-not-evaluate-untaken-branch",
+      "expression": "if(demand == 0, null, on_hand / demand)",
+      "env": {
+        "demand": { "kind": "number", "amount": "0" },
+        "on_hand": { "kind": "number", "amount": "50" }
+      },
+      "expect": { "kind": "null" }
+    },
+    {
+      "id": "unguarded-division-by-zero-errors",
+      "expression": "on_hand / demand",
+      "env": {
+        "demand": { "kind": "number", "amount": "0" },
+        "on_hand": { "kind": "number", "amount": "50" }
+      },
+      "expect": { "kind": "error", "code": "division_by_zero" }
+    },
+    {
+      "id": "matching-units-add",
+      "expression": "a + b",
+      "env": {
+        "a": { "kind": "number", "amount": "2", "unit": "kg" },
+        "b": { "kind": "number", "amount": "3", "unit": "kg" }
+      },
+      "expect": { "kind": "number", "amount": "5", "unit": "kg" }
+    },
+    {
+      "id": "mismatched-units-error",
+      "expression": "a + b",
+      "env": {
+        "a": { "kind": "number", "amount": "2", "unit": "kg" },
+        "b": { "kind": "number", "amount": "3", "unit": "lb" }
+      },
+      "expect": { "kind": "error", "code": "unit_mismatch" }
+    },
+    {
+      "id": "mismatched-currencies-error",
+      "expression": "a + b",
+      "env": {
+        "a": { "kind": "number", "amount": "2", "currency": "USD" },
+        "b": { "kind": "number", "amount": "3", "currency": "KWD" }
+      },
+      "expect": { "kind": "error", "code": "currency_mismatch" }
+    },
+    {
+      "id": "bare-zero-is-dimensionless",
+      "expression": "a == 0",
+      "env": { "a": { "kind": "number", "amount": "1000", "unit": "lines" } },
+      "expect": { "kind": "bool", "value": false }
+    },
+    {
+      "id": "bare-zero-compares-with-money",
+      "expression": "a > 0",
+      "env": { "a": { "kind": "number", "amount": "5", "currency": "USD" } },
+      "expect": { "kind": "bool", "value": true }
+    },
+    {
+      "id": "non-zero-literal-still-needs-a-unit",
+      "expression": "a > 1",
+      "env": { "a": { "kind": "number", "amount": "5", "unit": "kg" } },
+      "expect": { "kind": "error", "code": "unit_mismatch" }
+    },
+    {
+      "id": "scaling-keeps-the-unit",
+      "expression": "a * 3",
+      "env": { "a": { "kind": "number", "amount": "2", "unit": "kg" } },
+      "expect": { "kind": "number", "amount": "6", "unit": "kg" }
+    },
+    {
+      "id": "like-units-divide-to-a-ratio",
+      "expression": "a / b",
+      "env": {
+        "a": { "kind": "number", "amount": "6", "unit": "lines" },
+        "b": { "kind": "number", "amount": "3", "unit": "lines" }
+      },
+      "expect": { "kind": "number", "amount": "2" }
+    },
+    {
+      "id": "composite-units-are-rejected",
+      "expression": "a * b",
+      "env": {
+        "a": { "kind": "number", "amount": "2", "unit": "kg" },
+        "b": { "kind": "number", "amount": "3", "unit": "m" }
+      },
+      "expect": { "kind": "error", "code": "unit_composition" }
+    },
+    {
+      "id": "boolean-arithmetic-is-a-type-error",
+      "expression": "a + 1",
+      "env": { "a": { "kind": "bool", "value": true } },
+      "expect": { "kind": "error", "code": "type_error" }
+    },
+    {
+      "id": "missing-input-errors",
+      "expression": "srm.otif_pct + 1",
+      "env": {},
+      "expect": { "kind": "error", "code": "missing_input" }
+    },
+    {
+      "id": "unknown-function-is-rejected",
+      "expression": "today()",
+      "env": {},
+      "expect": { "kind": "error", "code": "unknown_function" }
+    },
+    {
+      "id": "chained-comparison-is-a-syntax-error",
+      "expression": "1 < 2 < 3",
+      "env": {},
+      "expect": { "kind": "error", "code": "syntax" }
+    },
+    {
+      "id": "empty-expression-is-a-syntax-error",
+      "expression": "   ",
+      "env": {},
+      "expect": { "kind": "error", "code": "syntax" }
+    },
+    {
+      "id": "spec-formula-supplier-otif",
+      "expression": "if(total_delivered_lines == 0, null, (on_time_in_full_lines / total_delivered_lines) * 100)",
+      "env": {
+        "on_time_in_full_lines": { "kind": "number", "amount": "920", "unit": "lines" },
+        "total_delivered_lines": { "kind": "number", "amount": "1000", "unit": "lines" }
+      },
+      "expect": { "kind": "number", "amount": "92" }
+    },
+    {
+      "id": "spec-formula-realised-savings",
+      "expression": "(baseline_price_usd - paid_price_usd) * purchased_qty",
+      "env": {
+        "baseline_price_usd": { "kind": "number", "amount": "10", "currency": "USD" },
+        "paid_price_usd": { "kind": "number", "amount": "9", "currency": "USD" },
+        "purchased_qty": { "kind": "number", "amount": "500" }
+      },
+      "expect": { "kind": "number", "amount": "500", "currency": "USD" }
+    },
+    {
+      "id": "spec-formula-supplier-health-index",
+      "expression": "(otif_pct * 0.4) + ((1 - min(quality_ppm / 10000, 1)) * 100 * 0.3) + (price_realisation_pct * 0.3)",
+      "env": {
+        "otif_pct": { "kind": "number", "amount": "92" },
+        "quality_ppm": { "kind": "number", "amount": "2000" },
+        "price_realisation_pct": { "kind": "number", "amount": "80" }
+      },
+      "expect": { "kind": "number", "amount": "84.8" }
+    },
+    {
+      "id": "non-ascii-identifier-is-a-syntax-error",
+      "expression": "café + 1",
+      "env": {},
+      "expect": { "kind": "error", "code": "syntax" }
+    },
+    {
+      "id": "non-ascii-digit-is-a-syntax-error",
+      "expression": "5٣ + 1",
+      "env": {},
+      "expect": { "kind": "error", "code": "syntax" }
+    },
+    {
+      "id": "references-are-extracted-for-the-graph",
+      "expression": "if(src.spend_usd > 0, srm.otif_pct, ctr.baseline)",
+      "env": {},
+      "expect": {
+        "kind": "references",
+        "references": ["ctr.baseline", "src.spend_usd", "srm.otif_pct"]
+      }
+    }
+  ]
+}
