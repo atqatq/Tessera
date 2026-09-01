@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "module": {
+    "id": "example",
+    "name": "Example module",
+    "version": "0.1.0",
+    "description": "A minimal conformant module — copy this directory and rename."
+  },
+  "requires": ["kernel.access", "kernel.ledger"],
+  "permissions": {
+    "known_columns": ["sku", "qty", "price"],
+    "peer_reads": []
+  },
+  "agent": {
+    "tier": "observe",
+    "craft": "WATCHES EXAMPLES"
+  },
+  "kpis": [
+    { "id": "example.fill_rate", "label": "Fill rate", "unit": "%" }
+  ],
+  "telemetry": [
+    { "kind": "example.sensor", "description": "Example telemetry declaration" }
+  ],
+  "egress_candidates": [
+    { "column": "sku", "granularity": "exact" }
+  ],
+  "compatibility": {
+    "kernel_api": ">=1.0.0 <2.0.0",
+    "manifest_schema": 1
+  }
+}

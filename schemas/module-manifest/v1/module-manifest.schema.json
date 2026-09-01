@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tessera.dev/schemas/module-manifest/v1/module-manifest.schema.json",
+  "title": "Tessera module manifest, schema version 1 (FROZEN)",
+  "$comment": "Frozen artefact (Part E4): this schema is version 1 and immutable. Additive evolution ships as schema version 2 with a migration note; nothing here changes in place. A module's manifest names ONE schema_version, and the kernel refuses manifests it does not implement — forward compatibility is a refusal, not a guess. requires may name kernel services only (ADR-0002); kernel.notary is deliberately absent from the enum: notarisation is a pluggable adapter, not a service (see docs/site/src/explanation/federation-and-egress.md, appendix).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "module", "requires", "permissions", "agent", "kpis", "telemetry", "egress_candidates", "compatibility"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "module": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "version", "description"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "$comment": "ModuleId grammar: 1-64 chars, a-z 0-9 . - _, first char a letter or digit (docs/site/src/reference/identifier-grammar.md). Module ids never carry the kernel. prefix.",
+          "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$",
+          "not": { "pattern": "^kernel\\." }
+        },
+        "name": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "version": { "type": "string", "$comment": "SemVer 2.0.0", "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$" },
+        "description": { "type": "string", "maxLength": 500 }
+      }
+    },
+    "requires": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "kernel.access",
+          "kernel.ledger",
+          "kernel.master_data",
+          "kernel.events",
+          "kernel.plugin_host",
+          "kernel.tenancy",
+          "kernel.ingest",
+          "kernel.ids",
+          "kernel.origin",
+          "kernel.ai_core",
+          "kernel.agents",
+          "kernel.grid"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "$comment": "Declarative L0-L3 surface the module needs against OTHER modules. The kernel evaluates it deny-wins like everything else; a module is never trusted to enforce its own matrix.",
+      "properties": {
+        "peer_reads": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["module", "columns"],
+            "properties": {
+              "module": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$" },
+              "columns": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+            }
+          }
+        },
+        "known_columns": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      }
+    },
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tier", "craft"],
+      "properties": {
+        "tier": { "enum": ["observe", "advise", "act"] },
+        "craft": { "type": "string", "minLength": 1, "maxLength": 200, "$comment": "What the agent runs, in the module's own words — shown to operators, never executed as policy." }
+      }
+    },
+    "kpis": {
+      "type": "array",
+      "$comment": "The KPI pack: id, human label, and the unit. Rendering lives in dashboards; the manifest declares, it does not style.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "unit"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$" },
+          "label": { "type": "string", "minLength": 1, "maxLength": 100 },
+          "unit": { "type": "string", "minLength": 1, "maxLength": 20 }
+        }
+      }
+    },
+    "telemetry": {
+      "type": "array",
+      "$comment": "The module's meaningful IoT telemetry (docs/site/src/explanation/iot.md): a declaration, so ingest can plan buffers and permissions can bound access.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "description"],
+        "properties": {
+          "kind": { "type": "string", "minLength": 1, "maxLength": 64 },
+          "description": { "type": "string", "maxLength": 200 }
+        }
+      }
+    },
+    "egress_candidates": {
+      "type": "array",
+      "$comment": "The fields that may EVER leave the company, and at what granularity. Absence here is a promise: nothing else is egressible. The grid layers ODRL policy on top at share time.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["column", "granularity"],
+        "properties": {
+          "column": { "type": "string", "minLength": 1 },
+          "granularity": { "enum": ["exact", "banded", "aggregate"] }
+        }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kernel_api", "manifest_schema"],
+      "properties": {
+        "kernel_api": { "type": "string", "$comment": "SemVer range of the kernel plugin API this module binds to, e.g. '>=1.0.0 <2.0.0'." },
+        "manifest_schema": { "const": 1 }
+      }
+    }
+  }
+}

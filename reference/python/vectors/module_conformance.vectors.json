@@ -1,0 +1,159 @@
+{
+  "domain": "module-conformance/1",
+  "schema": "schemas/module-manifest/v1/module-manifest.schema.json",
+  "$comment": "The manifest gate a third-party module must pass (Part E4). Fixtures are data; the validator mirrors the frozen v1 schema's constraints. The Python reference replays these today; the kernel host replays the same files when it lands.",
+  "cases": [
+    {
+      "name": "the_template_manifest_is_valid",
+      "manifest_file": "../../../templates/module/manifest.json",
+      "expect_valid": true
+    },
+    {
+      "name": "kernel_prefix_id_is_refused",
+      "manifest": {
+        "schema_version": 1,
+        "module": { "id": "kernel.access", "name": "Impostor", "version": "1.0.0", "description": "x" },
+        "requires": ["kernel.access"],
+        "permissions": {},
+        "agent": { "tier": "observe", "craft": "WATCHES" },
+        "kpis": [],
+        "telemetry": [],
+        "egress_candidates": [],
+        "compatibility": { "kernel_api": ">=1.0.0 <2.0.0", "manifest_schema": 1 }
+      },
+      "expect_valid": false,
+      "reason": "module ids never carry the kernel. prefix"
+    },
+    {
+      "name": "uppercase_id_is_refused",
+      "manifest": {
+        "schema_version": 1,
+        "module": { "id": "Example", "name": "x", "version": "1.0.0", "description": "x" },
+        "requires": ["kernel.access"],
+        "permissions": {},
+        "agent": { "tier": "observe", "craft": "W" },
+        "kpis": [],
+        "telemetry": [],
+        "egress_candidates": [],
+        "compatibility": { "kernel_api": ">=1.0.0 <2.0.0", "manifest_schema": 1 }
+      },
+      "expect_valid": false,
+      "reason": "identifier grammar is lowercase"
+    },
+    {
+      "name": "unknown_requires_service_is_refused",
+      "manifest": {
+        "schema_version": 1,
+        "module": { "id": "example", "name": "x", "version": "1.0.0", "description": "x" },
+        "requires": ["kernel.notary"],
+        "permissions": {},
+        "agent": { "tier": "observe", "craft": "W" },
+        "kpis": [],
+        "telemetry": [],
+        "egress_candidates": [],
+        "compatibility": { "kernel_api": ">=1.0.0 <2.0.0", "manifest_schema": 1 }
+      },
+      "expect_valid": false,
+      "reason": "kernel.notary is not a service — notarisation is a pluggable adapter (E3)"
+    },
+    {
+      "name": "spoke_to_spoke_requires_are_refused",
+      "manifest": {
+        "schema_version": 1,
+        "module": { "id": "example", "name": "x", "version": "1.0.0", "description": "x" },
+        "requires": ["inv", "ord"],
+        "permissions": {},
+        "agent": { "tier": "observe", "craft": "W" },
+        "kpis": [],
+        "telemetry": [],
+        "egress_candidates": [],
+        "compatibility": { "kernel_api": ">=1.0.0 <2.0.0", "manifest_schema": 1 }
+      },
+      "expect_valid": false,
+      "reason": "requires names kernel services only (ADR-0002): modules are not services"
+    },
+    {
+      "name": "invalid_agent_tier_is_refused",
+      "manifest": {
+        "schema_version": 1,
+        "module": { "id": "example", "name": "x", "version": "1.0.0", "description": "x" },
+        "requires": ["kernel.access"],
+        "permissions": {},
+        "agent": { "tier": "autonomous", "craft": "W" },
+        "kpis": [],
+        "telemetry": [],
+        "egress_candidates": [],
+        "compatibility": { "kernel_api": ">=1.0.0 <2.0.0", "manifest_schema": 1 }
+      },
+      "expect_valid": false,
+      "reason": "tier is observe|advise|act; 'autonomous' is not a tier in this kernel"
+    },
+    {
+      "name": "unknown_schema_version_is_refused",
+      "manifest": {
+        "schema_version": 2,
+        "module": { "id": "example", "name": "x", "version": "1.0.0", "description": "x" },
+        "requires": ["kernel.access"],
+        "permissions": {},
+        "agent": { "tier": "observe", "craft": "W" },
+        "kpis": [],
+        "telemetry": [],
+        "egress_candidates": [],
+        "compatibility": { "kernel_api": ">=1.0.0 <2.0.0", "manifest_schema": 2 }
+      },
+      "expect_valid": false,
+      "reason": "forward compatibility is a refusal, not a guess"
+    },
+    {
+      "name": "bad_semver_is_refused",
+      "manifest": {
+        "schema_version": 1,
+        "module": { "id": "example", "name": "x", "version": "1.0", "description": "x" },
+        "requires": ["kernel.access"],
+        "permissions": {},
+        "agent": { "tier": "advise", "craft": "W" },
+        "kpis": [],
+        "telemetry": [],
+        "egress_candidates": [],
+        "compatibility": { "kernel_api": ">=1.0.0 <2.0.0", "manifest_schema": 1 }
+      },
+      "expect_valid": false,
+      "reason": "module versions are SemVer 2.0.0"
+    },
+    {
+      "name": "invalid_granularity_is_refused",
+      "manifest": {
+        "schema_version": 1,
+        "module": { "id": "example", "name": "x", "version": "1.0.0", "description": "x" },
+        "requires": ["kernel.access"],
+        "permissions": {},
+        "agent": { "tier": "observe", "craft": "W" },
+        "kpis": [],
+        "telemetry": [],
+        "egress_candidates": [{ "column": "sku", "granularity": "raw" }],
+        "compatibility": { "kernel_api": ">=1.0.0 <2.0.0", "manifest_schema": 1 }
+      },
+      "expect_valid": false,
+      "reason": "granularity is exact|banded|aggregate"
+    },
+    {
+      "name": "act_tier_module_is_valid_but_watched",
+      "manifest": {
+        "schema_version": 1,
+        "module": { "id": "example-act", "name": "Acting example", "version": "1.0.0", "description": "x" },
+        "requires": ["kernel.access", "kernel.ledger"],
+        "permissions": {
+          "known_columns": ["qty"],
+          "peer_reads": [{ "module": "ord", "columns": ["qty"] }]
+        },
+        "agent": { "tier": "act", "craft": "ACTS WITHIN ALLOWLISTS" },
+        "kpis": [],
+        "telemetry": [],
+        "egress_candidates": [],
+        "compatibility": { "kernel_api": ">=1.0.0 <2.0.0", "manifest_schema": 1 }
+      },
+      "expect_valid": true,
+      "reason": "act tier is legal in the manifest; at runtime it still needs allowlist + ORIGIN approval (kernel.access)"
+    }
+  ]
+}

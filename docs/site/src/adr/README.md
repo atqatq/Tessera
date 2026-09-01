@@ -17,6 +17,7 @@ that says why the old one was wrong.
 | [0008](https://github.com/atqatq/Tessera/blob/main/docs/adr/0008-vectors-are-the-contract.md) | Vectors are the contract |
 | [0009](https://github.com/atqatq/Tessera/blob/main/docs/adr/0009-cryptographic-primitives.md) | Cryptographic primitives come from audited crates |
 | [0010](https://github.com/atqatq/Tessera/blob/main/docs/adr/0010-structure-configurable-method-not.md) | Structure is configurable, method is not |
+| [0011](https://github.com/atqatq/Tessera/blob/main/docs/adr/0011-trust-boundary-for-out-of-tree-code.md) | The trust boundary for out-of-tree modules |
 
 Kernel invariant changes start as an RFC:
 [the process](https://github.com/atqatq/Tessera/blob/main/docs/site/src/RFC_PROCESS.md).
