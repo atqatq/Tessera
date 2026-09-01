@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2026 The Tessera Project
+# SPDX-License-Identifier: Apache-2.0
+
+[package]
+name = "scor-expr"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Expression DSL for hub-managed formulated fields"
+
+[dependencies]
+rust_decimal.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+serde.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true
