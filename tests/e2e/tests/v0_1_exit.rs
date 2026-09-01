@@ -90,6 +90,14 @@ fn a_stranger_gets_a_recommendation_and_can_read_its_ledger_entry() {
         "supplier moq",
     ]);
 
+    // no notary configured — the node runs fully without one (E3), and
+    // says so rather than degrading silently
+    let status = tessera(&["status", "--tenant", "acme"]);
+    assert!(
+        status.contains("notary: none") && status.contains("healthy"),
+        "a node with no notary must report healthy configuration: {status}"
+    );
+
     // the ledger entry recording the recommendation exists and verifies
     let ledger = tessera(&["ledger", "read", "--tenant", "acme"]);
     assert!(
