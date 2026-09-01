@@ -1,41 +1,71 @@
 # Roadmap
 
-Tessera is **docs-first** until the design freeze: specifications, ADRs, the
-topology diagram, and governance land now; code directories fill in after.
-This file tracks what lands when, and which new modules are on deck.
+**v0.x success criterion, in one sentence:** a person can install the
+kernel, install `inv`, ingest a CSV of stock positions, get a
+safety-stock recommendation, and read the ledger entry recording it —
+written as an end-to-end test in `tests/e2e` that fails today and
+flips to required when it passes.
 
-## Milestones
+Fourteen modules at genuine industry depth is 500+ engineer-years;
+the previous version of this file presented that wish list as a plan.
+It is not a plan. v0.x targets **exactly one module** plus the minimum
+kernel, and proves the depth bar with one real algorithm.
 
-| Milestone | Scope | Status |
+## v0.x — the one module and the minimum kernel
+
+| Piece | Scope | State |
 |---|---|---|
-| **M0 — architecture seed** | topology diagram (14 modules), ARCHITECTURE/MODULES/ADAPTIVE_SPINE/AGENT_RUNTIME/FEDERATION_AND_EGRESS/IOT docs, Apache-2.0 + naming license, governance files | **shipped** |
-| **M1 — executable spec** | `schemas/` (manifest, sharing-contract, signals) + `reference/python` executable spec with conformance vectors | next |
-| **M2 — kernel core** | `kernel/` rust workspace: `kernel.origin`, `kernel.access`, `kernel.ledger`, `kernel.master_data`, `kernel.events` | planned |
-| **M3 — module runtime** | `kernel.plugin_host`, first three modules (`pln`, `ord`, `inv`), module template + manifest checker | planned |
-| **M4 — agents** | `kernel.ai_core` leader, built-in module agents, `kernel.agents` (MCP + REST) sandbox | planned |
-| **M5 — grid** | `kernel.grid`, `kernel.notary`, sharing-contract engine, benchmark gates | planned |
-| **M6 — remaining modules** | `src`, `trf`, `crm`, `ful`, `ret`, `srm`, `ctr`, `fin`, `tsk`, `prj`, `net` | planned |
+| `kernel.access` | five-layer permission engine; fourteen decision codes | **built + tested** (`kernel/access`) |
+| `kernel.ledger` | per-tenant hash chains, append-only, idempotent replay | **built + tested** (`kernel/ledger`) |
+| `kernel.ids` | typed identifiers | **built + tested** (`kernel/ids`) |
+| `kernel.master_data` | bitemporal master data, expression DSL | specified (docs, ADR-0004) |
+| `kernel.events` | the bus | specified (ADR-0002 puts it inside the star) |
+| `kernel.plugin_host` | module lifecycle | specified (ADR-0006) |
+| `inv` | multi-echelon safety stock under staged service levels | **the one red-green-refactor cycle of this pass** (`modules/inv`) |
+
+The depth bar is proved by one algorithm with its conformance vectors
+written **before** the implementation — inputs, expected outputs, and
+the edge cases (zero demand, negative lead time, single echelon,
+service level at 0 and at 1). The vectors are the specification.
+
+## Design intent, not scheduled
+
+The rest of the original fourteen are specifications, kept as
+specifications. They are not a roadmap, carry no dates, and no
+labour is promised against them in v0.x:
+
+PLAN, SOURCE, TRANSFORM, ORDER, CRM, FULFILL, RETURN, SUPPLIERS,
+CONTRACTS, FINANCE, TASKS, PROJECTS, CONNECTORS — plus the adaptive
+spine (configuration, not a module), the grid (federation spec),
+agents (spec), and notarisation (optional appendix; the kernel runs
+with no notary configured).
+
+A module graduates from this section only by: a proposal issue, an
+RFC, a spec PR (manifest, permission matrix, KPI pack, agent tier,
+vectors), and a maintainer decision that v0.x is done — in that
+order, with the [success criterion](#v0x--the-one-module-and-the-minimum-kernel)
+still true.
+
+## After v0.x, in the order value would arrive
+
+1. **Ingest + CLI + persistence** — the v0.1 criterion demands it;
+   design lives in the docs (ingest framework, three stores).
+2. **`kernel.master_data`** — bitemporal facts underpin every
+   recommendation's assumptions.
+3. **`kernel.plugin_host`** — the module contract is already frozen
+   (`schemas/`); the host makes it loadable.
+4. **`kernel.events`** — the star's delivery mechanism, loom-tested.
+
+Each gets its own red-green cycles and its own conformance vectors;
+none is announced before its first vector exists.
 
 ## Next module candidates
 
-Voted per minor release. A candidate becomes a proposal issue, then a spec
-PR (manifest, permission matrix, KPI pack, agent tier justification,
-conformance vectors — see CONTRIBUTING).
-
-1. **AFTERMARKET** — service parts planning, warranty claims, field service
-   dispatch, install-base lifecycle. Distinct from RETURN: returns flow
-   backward through the chain; aftermarket serves the product in the field
-   for years after the sale.
-2. **SUSTAIN** — emissions accounting (scope 1–3 where supply-chain visible),
-   circularity loops, supplier ESG scoring and evidence packs. Increasingly
-   a procurement gate; belongs beside SUPPLIERS and CONTRACTS, not inside
-   them.
-3. **WORKFORCE** — labor demand from the plan, skills/certifications, shift
-   capacity, shop-floor assignment feeding TASKS and PROJECTS.
-
-Longer backlog (proposed earlier, not yet voted): **COMPLIANCE** (trade &
-customs, audit evidence), **ASSETS** (equipment/fleet/tooling lifecycle,
-predictive maintenance), **PRODUCT** (NPI, BOM governance, packaging).
+Voted per minor release, only after v0.x. A candidate becomes a
+proposal issue, then a spec PR (manifest, permission matrix, KPI set,
+agent tier justification, conformance vectors — see CONTRIBUTING).
+AFTERMARKET, SUSTAIN, WORKFORCE, COMPLIANCE, ASSETS and PRODUCT remain
+in the idea file at `docs/backlog/` — demand, not date, moves them.
 
 ## Non-goals
 
@@ -43,3 +73,5 @@ predictive maintenance), **PRODUCT** (NPI, BOM governance, packaging).
   configuration and extension modules.
 - No module-to-module direct calls, ever; the kernel brokers everything.
 - No agent, built-in or user-defined, ever holds ORIGIN.
+- No performance claim without a committed benchmark and a regression
+  gate (Part F.3).

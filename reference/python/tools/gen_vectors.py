@@ -19,6 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from tessera_ref import access as acc  # noqa: E402
 from tessera_ref import ledger as led  # noqa: E402
+from tessera_ref import safety_stock as ss  # noqa: E402
 
 VECTORS = Path(__file__).resolve().parents[1] / "vectors"
 
@@ -299,6 +300,91 @@ def ledger_cases():
     return cases
 
 
+# ---------------------------------------------------------------- safety stock
+
+def ech(name, mu, sd, L, sd_L, sl, parent=None):
+    return {"name": name, "mean_demand": mu, "sd_demand": sd,
+            "mean_lead_time": L, "sd_lead_time": sd_L,
+            "service_level": sl, "parent": parent}
+
+
+def ss_ok(name, echelons, expect_explain_0=None):
+    rec = ss.recommend([ss.Echelon(**e) for e in echelons])
+    # ceil-flip guard: committed cases must sit far from integer
+    # boundaries so a 1-ulp platform drift cannot flip a ceil.
+    for e, src in zip(rec.echelons, echelons):
+        raw = ss.z_from_service_level(src["service_level"]) * e.sigma_dl
+        if raw != 0.0 and abs(raw - round(raw)) < 1e-3:
+            raise SystemExit(f"case {name}: {e.name} ss raw {raw} too close to an integer")
+    case = {
+        "name": name,
+        "echelons": echelons,
+        "expected": {
+            "ok": True,
+            "method": rec.method,
+            "echelons": [
+                {"name": e.name, "ss_units": e.ss_units, "z": e.z,
+                 "sigma_dl": e.sigma_dl, "mean_demand": e.mean_demand,
+                 "sd_demand": e.sd_demand}
+                for e in rec.echelons
+            ],
+        },
+    }
+    if expect_explain_0 is not None:
+        got = rec.explain(0)
+        if got != expect_explain_0:
+            raise SystemExit(f"case {name}: explain mismatch\n  got  {got}\n  want {expect_explain_0}")
+        case["expected"]["explain_0"] = expect_explain_0
+    return case
+
+
+def ss_refused(name, echelons):
+    try:
+        ss.recommend([ss.Echelon(**e) for e in echelons])
+    except ss.ConfigError as err:
+        return {"name": name, "echelons": echelons,
+                "expected": {"ok": False, "message": str(err)}}
+    raise SystemExit(f"case {name}: expected refusal, got a recommendation")
+
+
+def safety_stock_cases():
+    cases = [
+        ss_ok(
+            "single_echelon_classic",
+            [ech("dc", 100.0, 30.0, 4.0, 0.0, 0.95)],
+            "echelon dc: safety stock 99 units — staged service-level MEIO, "
+            "sigma_DL 60.0 from lead time 4\u00b10, service level 95%"),
+        ss_ok("zero_demand_means_zero_stock",
+              [ech("dc", 0.0, 0.0, 14.0, 0.0, 0.99)]),
+        ss_ok("service_level_zero_means_zero_stock",
+              [ech("dc", 100.0, 30.0, 4.0, 0.0, 0.0)]),
+        ss_ok(
+            "two_echelons_staged_service_levels",
+            [ech("dc", 0.0, 0.0, 6.0, 1.0, 0.95),
+             ech("ret-1", 50.0, 12.0, 2.0, 0.0, 0.90, 0),
+             ech("ret-2", 50.0, 12.0, 2.0, 0.0, 0.90, 0)]),
+        ss_ok("lead_time_variability_only",
+              [ech("plant", 80.0, 0.0, 10.0, 2.0, 0.975)]),
+        ss_ok("high_service_level_high_sigma",
+              [ech("dc", 250.0, 90.0, 21.0, 4.0, 0.99)]),
+        ss_refused("service_level_one_is_refused",
+                   [ech("dc", 100.0, 30.0, 4.0, 0.0, 1.0)]),
+        ss_refused("service_level_above_one_is_refused",
+                   [ech("dc", 100.0, 30.0, 4.0, 0.0, 1.1)]),
+        ss_refused("negative_lead_time_is_refused",
+                   [ech("dc", 100.0, 30.0, -1.0, 0.0, 0.95)]),
+        ss_refused("negative_demand_deviation_is_refused",
+                   [ech("dc", 100.0, -30.0, 4.0, 0.0, 0.95)]),
+        ss_refused("parent_must_point_backwards",
+                   [ech("a", 50.0, 5.0, 2.0, 0.0, 0.90, 1),
+                    ech("b", 50.0, 5.0, 2.0, 0.0, 0.90)]),
+        ss_refused("duplicate_echelon_names_are_refused",
+                   [ech("x", 50.0, 5.0, 2.0, 0.0, 0.90),
+                    ech("x", 50.0, 5.0, 2.0, 0.0, 0.90)]),
+    ]
+    return cases
+
+
 # ---------------------------------------------------------------- main
 
 def main() -> int:
@@ -319,9 +405,17 @@ def main() -> int:
         json.dumps(access_doc, indent=2) + "\n", encoding="utf-8")
     (VECTORS / "ledger.vectors.json").write_text(
         json.dumps(ledger_doc, indent=2) + "\n", encoding="utf-8")
+    ss_doc = {
+        "domain": "safety-stock/1",
+        "method": ss.METHOD,
+        "cases": safety_stock_cases(),
+    }
+    (VECTORS / "safety_stock.vectors.json").write_text(
+        json.dumps(ss_doc, indent=2) + "\n", encoding="utf-8")
     n_access = len(access_doc["cases"])
     n_ledger = len(ledger_doc["cases"])
-    print(f"wrote {n_access} access cases, {n_ledger} ledger cases")
+    n_ss = len(ss_doc["cases"])
+    print(f"wrote {n_access} access cases, {n_ledger} ledger cases, {n_ss} safety-stock cases")
     covered = {c["expected"]["code"] for c in access_doc["cases"]}
     missing = [c for c in acc.CODES if c not in covered]
     if missing:

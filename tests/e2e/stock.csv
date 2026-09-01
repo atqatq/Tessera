@@ -1,0 +1,4 @@
+echelon,parent,mean_demand,sd_demand,mean_lead_time,sd_lead_time,service_level
+store-1,,50,12,2,0,0.90
+store-2,,50,12,2,0,0.90
+dc,store-1|store-2,0,0,6,1,0.95

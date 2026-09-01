@@ -1,0 +1,335 @@
+{
+  "domain": "safety-stock/1",
+  "method": "staged-service-level-meio/1",
+  "cases": [
+    {
+      "name": "single_echelon_classic",
+      "echelons": [
+        {
+          "name": "dc",
+          "mean_demand": 100.0,
+          "sd_demand": 30.0,
+          "mean_lead_time": 4.0,
+          "sd_lead_time": 0.0,
+          "service_level": 0.95,
+          "parent": null
+        }
+      ],
+      "expected": {
+        "ok": true,
+        "method": "staged-service-level-meio/1",
+        "echelons": [
+          {
+            "name": "dc",
+            "ss_units": 99,
+            "z": 1.64521144,
+            "sigma_dl": 60.0,
+            "mean_demand": 100.0,
+            "sd_demand": 30.0
+          }
+        ],
+        "explain_0": "echelon dc: safety stock 99 units \u2014 staged service-level MEIO, sigma_DL 60.0 from lead time 4\u00b10, service level 95%"
+      }
+    },
+    {
+      "name": "zero_demand_means_zero_stock",
+      "echelons": [
+        {
+          "name": "dc",
+          "mean_demand": 0.0,
+          "sd_demand": 0.0,
+          "mean_lead_time": 14.0,
+          "sd_lead_time": 0.0,
+          "service_level": 0.99,
+          "parent": null
+        }
+      ],
+      "expected": {
+        "ok": true,
+        "method": "staged-service-level-meio/1",
+        "echelons": [
+          {
+            "name": "dc",
+            "ss_units": 0,
+            "z": 2.326785333,
+            "sigma_dl": 0.0,
+            "mean_demand": 0.0,
+            "sd_demand": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "name": "service_level_zero_means_zero_stock",
+      "echelons": [
+        {
+          "name": "dc",
+          "mean_demand": 100.0,
+          "sd_demand": 30.0,
+          "mean_lead_time": 4.0,
+          "sd_lead_time": 0.0,
+          "service_level": 0.0,
+          "parent": null
+        }
+      ],
+      "expected": {
+        "ok": true,
+        "method": "staged-service-level-meio/1",
+        "echelons": [
+          {
+            "name": "dc",
+            "ss_units": 0,
+            "z": 0.0,
+            "sigma_dl": 60.0,
+            "mean_demand": 100.0,
+            "sd_demand": 30.0
+          }
+        ]
+      }
+    },
+    {
+      "name": "two_echelons_staged_service_levels",
+      "echelons": [
+        {
+          "name": "dc",
+          "mean_demand": 0.0,
+          "sd_demand": 0.0,
+          "mean_lead_time": 6.0,
+          "sd_lead_time": 1.0,
+          "service_level": 0.95,
+          "parent": null
+        },
+        {
+          "name": "ret-1",
+          "mean_demand": 50.0,
+          "sd_demand": 12.0,
+          "mean_lead_time": 2.0,
+          "sd_lead_time": 0.0,
+          "service_level": 0.9,
+          "parent": 0
+        },
+        {
+          "name": "ret-2",
+          "mean_demand": 50.0,
+          "sd_demand": 12.0,
+          "mean_lead_time": 2.0,
+          "sd_lead_time": 0.0,
+          "service_level": 0.9,
+          "parent": 0
+        }
+      ],
+      "expected": {
+        "ok": true,
+        "method": "staged-service-level-meio/1",
+        "echelons": [
+          {
+            "name": "dc",
+            "ss_units": 179,
+            "z": 1.64521144,
+            "sigma_dl": 108.295890965,
+            "mean_demand": 100.0,
+            "sd_demand": 16.970562748
+          },
+          {
+            "name": "ret-1",
+            "ss_units": 22,
+            "z": 1.281728757,
+            "sigma_dl": 16.970562748,
+            "mean_demand": 50.0,
+            "sd_demand": 12.0
+          },
+          {
+            "name": "ret-2",
+            "ss_units": 22,
+            "z": 1.281728757,
+            "sigma_dl": 16.970562748,
+            "mean_demand": 50.0,
+            "sd_demand": 12.0
+          }
+        ]
+      }
+    },
+    {
+      "name": "lead_time_variability_only",
+      "echelons": [
+        {
+          "name": "plant",
+          "mean_demand": 80.0,
+          "sd_demand": 0.0,
+          "mean_lead_time": 10.0,
+          "sd_lead_time": 2.0,
+          "service_level": 0.975,
+          "parent": null
+        }
+      ],
+      "expected": {
+        "ok": true,
+        "method": "staged-service-level-meio/1",
+        "echelons": [
+          {
+            "name": "plant",
+            "ss_units": 314,
+            "z": 1.960394917,
+            "sigma_dl": 160.0,
+            "mean_demand": 80.0,
+            "sd_demand": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "name": "high_service_level_high_sigma",
+      "echelons": [
+        {
+          "name": "dc",
+          "mean_demand": 250.0,
+          "sd_demand": 90.0,
+          "mean_lead_time": 21.0,
+          "sd_lead_time": 4.0,
+          "service_level": 0.99,
+          "parent": null
+        }
+      ],
+      "expected": {
+        "ok": true,
+        "method": "staged-service-level-meio/1",
+        "echelons": [
+          {
+            "name": "dc",
+            "ss_units": 2517,
+            "z": 2.326785333,
+            "sigma_dl": 1081.711606668,
+            "mean_demand": 250.0,
+            "sd_demand": 90.0
+          }
+        ]
+      }
+    },
+    {
+      "name": "service_level_one_is_refused",
+      "echelons": [
+        {
+          "name": "dc",
+          "mean_demand": 100.0,
+          "sd_demand": 30.0,
+          "mean_lead_time": 4.0,
+          "sd_lead_time": 0.0,
+          "service_level": 1.0,
+          "parent": null
+        }
+      ],
+      "expected": {
+        "ok": false,
+        "message": "dc: service level >= 1 is unachievable"
+      }
+    },
+    {
+      "name": "service_level_above_one_is_refused",
+      "echelons": [
+        {
+          "name": "dc",
+          "mean_demand": 100.0,
+          "sd_demand": 30.0,
+          "mean_lead_time": 4.0,
+          "sd_lead_time": 0.0,
+          "service_level": 1.1,
+          "parent": null
+        }
+      ],
+      "expected": {
+        "ok": false,
+        "message": "dc: service level >= 1 is unachievable"
+      }
+    },
+    {
+      "name": "negative_lead_time_is_refused",
+      "echelons": [
+        {
+          "name": "dc",
+          "mean_demand": 100.0,
+          "sd_demand": 30.0,
+          "mean_lead_time": -1.0,
+          "sd_lead_time": 0.0,
+          "service_level": 0.95,
+          "parent": null
+        }
+      ],
+      "expected": {
+        "ok": false,
+        "message": "dc: negative lead time"
+      }
+    },
+    {
+      "name": "negative_demand_deviation_is_refused",
+      "echelons": [
+        {
+          "name": "dc",
+          "mean_demand": 100.0,
+          "sd_demand": -30.0,
+          "mean_lead_time": 4.0,
+          "sd_lead_time": 0.0,
+          "service_level": 0.95,
+          "parent": null
+        }
+      ],
+      "expected": {
+        "ok": false,
+        "message": "dc: negative demand statistics"
+      }
+    },
+    {
+      "name": "parent_must_point_backwards",
+      "echelons": [
+        {
+          "name": "a",
+          "mean_demand": 50.0,
+          "sd_demand": 5.0,
+          "mean_lead_time": 2.0,
+          "sd_lead_time": 0.0,
+          "service_level": 0.9,
+          "parent": 1
+        },
+        {
+          "name": "b",
+          "mean_demand": 50.0,
+          "sd_demand": 5.0,
+          "mean_lead_time": 2.0,
+          "sd_lead_time": 0.0,
+          "service_level": 0.9,
+          "parent": null
+        }
+      ],
+      "expected": {
+        "ok": false,
+        "message": "a: parent index 1 is not before 0 (cycle or gap)"
+      }
+    },
+    {
+      "name": "duplicate_echelon_names_are_refused",
+      "echelons": [
+        {
+          "name": "x",
+          "mean_demand": 50.0,
+          "sd_demand": 5.0,
+          "mean_lead_time": 2.0,
+          "sd_lead_time": 0.0,
+          "service_level": 0.9,
+          "parent": null
+        },
+        {
+          "name": "x",
+          "mean_demand": 50.0,
+          "sd_demand": 5.0,
+          "mean_lead_time": 2.0,
+          "sd_lead_time": 0.0,
+          "service_level": 0.9,
+          "parent": null
+        }
+      ],
+      "expected": {
+        "ok": false,
+        "message": "duplicate echelon name: x"
+      }
+    }
+  ]
+}
