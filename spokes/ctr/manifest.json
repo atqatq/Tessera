@@ -1,0 +1,72 @@
+{
+  "spoke": "ctr",
+  "version": "0.1.0",
+  "display_name": "Contracts",
+  "requires": [
+    "hub.master_data",
+    "hub.events",
+    "hub.ledger",
+    "hub.access",
+    "hub.ai_core"
+  ],
+  "enhances": [
+    "spoke.srm",
+    "spoke.src"
+  ],
+  "provides": {
+    "objects": [
+      "ctr.contract",
+      "ctr.commercial_terms",
+      "ctr.amendment"
+    ],
+    "events": [
+      "ctr.terms_published",
+      "ctr.contract_expired"
+    ],
+    "kpis": [
+      "ctr.price_realisation_pct",
+      "ctr.renewal_exposure_usd"
+    ]
+  },
+  "consumes": [
+    {
+      "field": "srm.supplier.tier",
+      "on_missing": "null"
+    }
+  ],
+  "roles": [
+    "CTR",
+    "LGL",
+    "FIN"
+  ],
+  "routes": [
+    "/ctr",
+    "/ctr/contracts",
+    "/ctr/terms"
+  ],
+  "default_enabled": false,
+  "ai": {
+    "enabled": true,
+    "tier": "observe",
+    "signal_kinds": [
+      "finding",
+      "risk"
+    ]
+  },
+  "dashboards": [
+    {
+      "slug": "renewal-pipeline",
+      "title": "Renewal pipeline",
+      "kpis": [
+        "ctr.renewal_exposure_usd"
+      ]
+    },
+    {
+      "slug": "price-realisation",
+      "title": "Price realisation",
+      "kpis": [
+        "ctr.price_realisation_pct"
+      ]
+    }
+  ]
+}

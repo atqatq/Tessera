@@ -1,0 +1,292 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://scor-platform.internal/schemas/manifest.schema.json",
+  "title": "Spoke manifest",
+  "description": "Declares what a spoke needs, what it may optionally use, and what it publishes. The dependency rule is enforced here structurally: 'requires' accepts hub service names only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spoke",
+    "version",
+    "requires",
+    "provides"
+  ],
+  "properties": {
+    "spoke": {
+      "description": "Registered spoke code.",
+      "enum": [
+        "pln",
+        "src",
+        "trf",
+        "ord",
+        "ful",
+        "ret",
+        "inv",
+        "srm",
+        "ctr",
+        "tsk",
+        "prj"
+      ]
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?$"
+    },
+    "display_name": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "requires": {
+      "description": "Hard dependencies. Hub services only. A spoke here would break independent disabling.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "hub.origin",
+          "hub.access",
+          "hub.master_data",
+          "hub.ingest",
+          "hub.ledger",
+          "hub.events",
+          "hub.plugin_host",
+          "hub.tenancy",
+          "hub.ai_core"
+        ]
+      }
+    },
+    "enhances": {
+      "description": "Soft dependencies. Absence degrades behaviour but never blocks install or run.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^spoke\\.[a-z][a-z0-9_]{1,15}$"
+      }
+    },
+    "provides": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "objects": {
+          "$ref": "#/$defs/namespacedList"
+        },
+        "events": {
+          "$ref": "#/$defs/namespacedList"
+        },
+        "kpis": {
+          "$ref": "#/$defs/namespacedList"
+        }
+      }
+    },
+    "consumes": {
+      "description": "Cross-spoke reads. Every entry must declare what happens when the owning spoke is unavailable.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "field",
+          "on_missing"
+        ],
+        "properties": {
+          "field": {
+            "$ref": "#/$defs/namespacedName"
+          },
+          "on_missing": {
+            "enum": [
+              "hold_last",
+              "default",
+              "null",
+              "fail"
+            ]
+          },
+          "default_value": {},
+          "origin_approval": {
+            "description": "Ledger reference for the origin approval. Mandatory when on_missing is 'fail'.",
+            "type": "string",
+            "pattern": "^ORIG-\\d{4}-\\d{4}$"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "on_missing": {
+                  "const": "fail"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "origin_approval"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "on_missing": {
+                  "const": "default"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "default_value"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "roles": {
+      "description": "Three-letter role codes this spoke contributes to the assignable list.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{3}$"
+      }
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^/[a-z0-9\\-/:]*$"
+      }
+    },
+    "default_enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "ai": {
+      "description": "The spoke's own agent. It reads, analyses, proposes and assesses risk within this spoke, and reports signals to the hub leader agent. Absent means the spoke reports nothing.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "tier": {
+          "description": "observe: read and report only. advise: may raise proposals. act: may apply changes inside act_allowlist.",
+          "enum": [
+            "observe",
+            "advise",
+            "act"
+          ]
+        },
+        "act_allowlist": {
+          "description": "Field patterns this agent may write without human approval. Own namespace only.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,15}\\..*$"
+          }
+        },
+        "origin_approval": {
+          "type": "string",
+          "pattern": "^ORIG-\\d{4}-\\d{4}$"
+        },
+        "signal_kinds": {
+          "description": "What this agent reports upward: findings, risks, proposals, forecasts.",
+          "type": "array",
+          "items": {
+            "enum": [
+              "finding",
+              "risk",
+              "proposal",
+              "forecast",
+              "anomaly"
+            ]
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "enabled": {
+                "const": true
+              },
+              "tier": {
+                "const": "act"
+              }
+            },
+            "required": [
+              "enabled",
+              "tier"
+            ]
+          },
+          "then": {
+            "required": [
+              "act_allowlist",
+              "origin_approval"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "enabled": {
+                "const": true
+              }
+            },
+            "required": [
+              "enabled"
+            ]
+          },
+          "then": {
+            "required": [
+              "tier"
+            ]
+          }
+        }
+      ]
+    },
+    "dashboards": {
+      "description": "KPI dashboards this spoke ships. Tenants may modify them and add their own; these are the defaults.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "slug"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{1,39}$"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 60
+          },
+          "kpis": {
+            "$ref": "#/$defs/namespacedList"
+          },
+          "modifiable": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "namespacedName": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,15}\\.[a-z][a-z0-9_.]*$"
+    },
+    "namespacedList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/namespacedName"
+      }
+    }
+  }
+}

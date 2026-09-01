@@ -1,0 +1,80 @@
+{
+  "spoke": "srm",
+  "version": "0.1.0",
+  "display_name": "Supplier relations",
+  "requires": [
+    "hub.master_data",
+    "hub.events",
+    "hub.ledger",
+    "hub.access",
+    "hub.ai_core"
+  ],
+  "enhances": [
+    "spoke.src",
+    "spoke.ctr"
+  ],
+  "provides": {
+    "objects": [
+      "srm.supplier",
+      "srm.scorecard",
+      "srm.qualification",
+      "srm.risk_rating"
+    ],
+    "events": [
+      "srm.supplier_rated",
+      "srm.supplier_suspended"
+    ],
+    "kpis": [
+      "srm.otif_pct",
+      "srm.quality_ppm",
+      "srm.health_index"
+    ]
+  },
+  "consumes": [
+    {
+      "field": "ctr.commercial_terms.penalty_exposure_usd",
+      "on_missing": "hold_last"
+    },
+    {
+      "field": "src.spend_usd_ttm",
+      "on_missing": "null"
+    }
+  ],
+  "roles": [
+    "SRM",
+    "SPD",
+    "SQM"
+  ],
+  "routes": [
+    "/srm",
+    "/srm/suppliers",
+    "/srm/scorecards"
+  ],
+  "default_enabled": false,
+  "ai": {
+    "enabled": true,
+    "tier": "advise",
+    "signal_kinds": [
+      "finding",
+      "risk",
+      "proposal"
+    ]
+  },
+  "dashboards": [
+    {
+      "slug": "supplier-health",
+      "title": "Supplier health",
+      "kpis": [
+        "srm.health_index",
+        "srm.otif_pct"
+      ]
+    },
+    {
+      "slug": "concentration-risk",
+      "title": "Concentration risk",
+      "kpis": [
+        "srm.otif_pct"
+      ]
+    }
+  ]
+}
