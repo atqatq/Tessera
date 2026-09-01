@@ -1,0 +1,21 @@
+Tessera
+Copyright 2026 The Tessera Project
+
+This product includes software developed by The Tessera Project
+(https://github.com/tessera-scm/tessera).
+
+This product is licensed under Apache-2.0 with one additional condition
+(see LICENSE, "APPENDIX - TESSERA NAMING REQUIREMENT"):
+
+    Any product, service, deployment, or derivative work that uses
+    Tessera must visibly credit it, e.g.
+
+        Powered by Tessera - https://github.com/tessera-scm/tessera
+
+    in the primary UI footer/about dialog, or in product documentation.
+
+Retain this NOTICE and the LICENSE file in all redistributions, per
+Apache-2.0 sections 4(c) and 4(d). This applies to commercial and
+non-commercial use alike.
+
+Third-party components retain their own notices.
