@@ -22,13 +22,18 @@ enterprise and a two-person shop can both run. A few rules keep it trustworthy.
 
 ```bash
 git checkout -b feat/my-change
-cargo fmt && cargo clippy --workspace -- -D warnings
-cargo test  --workspace
-pip install -e reference/python && pytest reference/python -q
+make check   # fmt, clippy -D warnings, both suites, vectors, manifests, REUSE
 ```
 
+`make check` is the single source of truth for gates — the same list CI
+runs. Install once: a rust toolchain (rustup), `pip install -e
+reference/python`, and `pip install reuse`.
+
 - Conventional Commits (`feat:`, `fix:`, `spoke(pln):`, `docs:`).
-- One logical change per PR; sign off commits (`git commit -s`) — DCO 1.1.
+- One logical change per PR; sign off commits (`git commit -s`) — DCO 1.1,
+  enforced in CI.
+- Work happens on branches; `main` additionally requires cryptographic
+  commit signatures (see GOVERNANCE.md).
 - New spokes: open a proposal issue first (see docs/SPOKES.md, "spoke contract"),
   include manifest, permission matrix, KPI set, agent tier justification,
   and conformance vectors.

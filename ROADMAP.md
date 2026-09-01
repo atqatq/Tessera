@@ -1,15 +1,16 @@
 # Roadmap
 
-Tessera is **docs-first** until the design freeze: specifications, ADRs, the
-topology diagram, and governance land now; code directories fill in after.
-This file tracks what lands when, and which new spokes are on deck.
+Tessera was docs-first; **M1 shipped the executable spec** — language-neutral
+conformance vectors with two implementations (python reference, rust kernel)
+locked to the same file. This file tracks what lands when, and which new
+spokes are on deck.
 
 ## Milestones
 
 | Milestone | Scope | Status |
 |---|---|---|
 | **M0 — architecture seed** | topology diagram (14 spokes), ARCHITECTURE/SPOKES/ADAPTIVE_SPINE/AGENT_RUNTIME/FEDERATION_AND_EGRESS/IOT docs, Apache-2.0 + naming license, governance files | **shipped** |
-| **M1 — executable spec** | `schemas/` (manifest, sharing-contract, signals) + `reference/python` executable spec with conformance vectors | next |
+| **M1 — executable spec** | `conformance/` vectors, `schemas/`, `reference/python` + `rust/` (scor-expr, scor-manifest, scor-policy), spoke manifests + checker, `make check` gate | **shipped** |
 | **M2 — hub core** | `hub/` rust workspace: `hub.origin`, `hub.access`, `hub.ledger`, `hub.master_data`, `hub.events` | planned |
 | **M3 — spoke runtime** | `hub.plugin_host`, first three spokes (`pln`, `ord`, `inv`), spoke template + manifest checker | planned |
 | **M4 — agents** | `hub.ai_core` leader, built-in spoke agents, `hub.agents` (MCP + REST) sandbox | planned |

@@ -142,38 +142,44 @@ retroactive. Benchmarking publishes p10/p50/p90 + party count only
 
 ## Quickstart
 
+The executable spec runs today — two implementations, one set of
+conformance vectors:
+
 ```bash
 git clone https://github.com/atqatq/Tessera.git
-cd tessera
-docker compose up          # hub + postgres + bus + plugin host (dev profile)
-open http://localhost:8080 # setup wizard = the adaptive spine
+cd Tessera
+make check        # fmt, clippy -D warnings, both suites, vectors, REUSE
 ```
 
-Reference CLI (python):
+Or just the python reference:
 
 ```bash
 pip install -e reference/python
-tessera init --tenant demo --blueprint retail
-tessera spoke list
-tessera ingest csv ./demo/orders.csv --into ord
+pytest reference/python -q    # 168 tests, conformance vectors included
 ```
+
+The hub server and the setup wizard land with M2 (see [ROADMAP.md](ROADMAP.md));
+there is no `tessera` CLI yet.
 
 ## Repository layout
 
 ```
-hub/                 rust workspace: hub services (origin, access, ledger, ...)
-spokes/              one crate per spoke (pln, src, trf, ord, crm, ful, ret,
-                     inv, srm, ctr, fin, tsk, prj, net)
-agents/              built-in spoke agents + leader agent (AIL)
-sdk/                 MCP + REST client SDKs, plugin API
-reference/python     executable spec & conformance vectors
-schemas/             manifest.schema.json, sharing-contract, signals
-docs/                architecture docs + canonical diagrams
+conformance/         language-neutral test vectors - the executable spec's
+                     arbiter, run by BOTH implementations
+schemas/             manifest.schema.json + sharing-contract shapes
+reference/python     executable spec & conformance harness (scor_ref)
+rust/                production kernel: scor-expr, scor-manifest,
+                     scor-policy - vector-locked, clippy strict
+spokes/              one manifest per installed spoke (ctr, srm seeded)
+tools/               CI gates (manifest checker)
+docs/                architecture docs, specs, canonical diagrams
 .github/             CI, issue & PR templates
 ```
 
-The repo is **docs-first**: the layout above is the target shape. Code
-directories land after the design freeze (see [ROADMAP.md](ROADMAP.md)).
+The repo was docs-first; **M1 (the executable spec) has landed** — both
+implementations run the same vector file, so they agree by construction
+rather than by review. The hub services themselves (`hub/`) land with M2
+(see [ROADMAP.md](ROADMAP.md)).
 
 ## Roadmap — next spoke candidates
 
@@ -190,8 +196,9 @@ Propose your own via [feature template](.github/ISSUE_TEMPLATE/feature_request.m
 
 ## Contributing
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md). Vector-first: behavior changes ship
-with conformance vectors. Design tokens: monotone zinc + exactly one accent.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) and [GOVERNANCE.md](GOVERNANCE.md).
+Vector-first: behavior changes ship with conformance vectors, and every
+commit carries a DCO sign-off. Design tokens: monotone zinc + exactly one accent.
 
 ## License & attribution
 
