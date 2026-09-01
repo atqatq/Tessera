@@ -18,6 +18,7 @@ that says why the old one was wrong.
 | [0009](https://github.com/atqatq/Tessera/blob/main/docs/adr/0009-cryptographic-primitives.md) | Cryptographic primitives come from audited crates |
 | [0010](https://github.com/atqatq/Tessera/blob/main/docs/adr/0010-structure-configurable-method-not.md) | Structure is configurable, method is not |
 | [0011](https://github.com/atqatq/Tessera/blob/main/docs/adr/0011-trust-boundary-for-out-of-tree-code.md) | The trust boundary for out-of-tree modules |
+| [0012](https://github.com/atqatq/Tessera/blob/main/docs/adr/0012-origin-delegation.md) | ORIGIN delegation: scoped, time-boxed, rate-limited, revocable |
 
 Kernel invariant changes start as an RFC:
 [the process](https://github.com/atqatq/Tessera/blob/main/docs/site/src/RFC_PROCESS.md).

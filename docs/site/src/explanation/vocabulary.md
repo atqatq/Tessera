@@ -19,6 +19,7 @@ code disagree, the code and its vectors win and the prose gets fixed.
 | **Staged service levels** | per-echelon service-level targets in multi-echelon inventory optimization; the method `inv`'s safety-stock core implements. |
 | **Adaptive spine** | setup capability: entities, flows, KPIs, vocabulary scoped to the tenant. Structure is configurable; method is not. |
 | **Role pack** | a configuration artefact encoding a job: KPIs, cadence, dashboards, escalation paths, agent briefs. Not an HR module. |
+| **Delegation** | ORIGIN approval made delegable: scoped (module × action × columns), time-boxed, rate-limited, revocable, ledger-stamped at issue and every use, never re-delegable — [ADR-0012](https://github.com/atqatq/Tessera/blob/main/docs/adr/0012-origin-delegation.md) |
 | **The competence thesis** | the correct path is the default path and every deviation leaves a record — [docs/OPERATOR_MODEL.md](https://github.com/atqatq/Tessera/blob/main/docs/OPERATOR_MODEL.md) |
 | **Grid** | the inter-company layer: sharing contracts, node tiers, benchmark gates. External to the kernel's trust model. |
 | **Module log** | a module's verbose log, referenced by write-through pointers from the master log. Freezes read-only when the module is disabled. |

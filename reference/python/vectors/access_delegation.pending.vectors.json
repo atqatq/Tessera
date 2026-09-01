@@ -1,0 +1,218 @@
+{
+  "domain": "access-delegation/1",
+  "status": "pending-implementation",
+  "$comment": "Part E5: the conformance contract for kernel.delegation, committed BEFORE any implementation (specify-not-build, Part 0.3). The four deny-wins properties are pinned as data here and as executable proptest source in docs/adr/0012. Neither implementation consumes this file yet; when kernel.delegation lands, both must replay it byte-identically. The env/request shapes mirror access.vectors.json plus a `delegations` collection; the grant_verdict semantics reuse L2 expiry rules (inclusive instant, fail closed).",
+  "codes": ["allow_delegation", "deny_delegation_missing", "deny_delegation_expired", "deny_delegation_exhausted", "deny_delegation_revoked", "deny_delegation_scope", "deny_delegation_nondelegable"],
+  "cases": [
+    {
+      "name": "a_delegation_within_scope_is_allowed_and_ledger_stamped",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": ["qty", "price", "sku"],
+        "rules": [{"role": "planner", "module": "inv", "action": "write", "column": "*", "effect": "allow"}],
+        "grants": [],
+        "agent_allowlist": [["inv", "write"]],
+        "origin_approvals": [],
+        "delegations": [
+          {
+            "id": "del-1",
+            "subject": "ag-inv-1",
+            "module": "inv",
+            "action": "write",
+            "columns": ["qty"],
+            "max_uses": 5,
+            "uses": 0,
+            "expires_at": 2000,
+            "revoked": false
+          }
+        ]
+      },
+      "request": {
+        "actor": {"kind": "agent", "subject": "ag-inv-1", "tier": "act"},
+        "home": "inv",
+        "target": "inv",
+        "action": "write",
+        "columns": ["qty"],
+        "origin_intent": null,
+        "delegation_id": "del-1"
+      },
+      "expected": {"code": "allow_delegation", "layer": "l1", "ledger_stamp": {"at": "use", "delegation": "del-1"}}
+    },
+    {
+      "name": "a_delegation_cannot_widen_its_own_scope",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": ["qty", "price", "sku"],
+        "rules": [{"role": "planner", "module": "inv", "action": "write", "column": "*", "effect": "allow"}],
+        "grants": [],
+        "agent_allowlist": [["inv", "write"]],
+        "origin_approvals": [],
+        "delegations": [
+          {
+            "id": "del-2",
+            "subject": "ag-inv-1",
+            "module": "inv",
+            "action": "write",
+            "columns": ["qty"],
+            "max_uses": 5,
+            "uses": 0,
+            "expires_at": 2000,
+            "revoked": false
+          }
+        ]
+      },
+      "request": {
+        "actor": {"kind": "agent", "subject": "ag-inv-1", "tier": "act"},
+        "home": "inv",
+        "target": "inv",
+        "action": "write",
+        "columns": ["qty", "price"],
+        "origin_intent": null,
+        "delegation_id": "del-2"
+      },
+      "expected": {"code": "deny_delegation_scope", "layer": "l1"}
+    },
+    {
+      "name": "a_delegation_cannot_outlive_its_expiry",
+      "env": {
+        "now": 2000,
+        "module_enabled": true,
+        "known_columns": ["qty", "price", "sku"],
+        "rules": [{"role": "planner", "module": "inv", "action": "write", "column": "*", "effect": "allow"}],
+        "grants": [],
+        "agent_allowlist": [["inv", "write"]],
+        "origin_approvals": [],
+        "delegations": [
+          {
+            "id": "del-3",
+            "subject": "ag-inv-1",
+            "module": "inv",
+            "action": "write",
+            "columns": ["qty"],
+            "max_uses": 5,
+            "uses": 0,
+            "expires_at": 2000,
+            "revoked": false
+          }
+        ]
+      },
+      "request": {
+        "actor": {"kind": "agent", "subject": "ag-inv-1", "tier": "act"},
+        "home": "inv",
+        "target": "inv",
+        "action": "write",
+        "columns": ["qty"],
+        "origin_intent": null,
+        "delegation_id": "del-3"
+      },
+      "expected": {"code": "deny_delegation_expired", "layer": "l1"}
+    },
+    {
+      "name": "a_delegation_cannot_survive_revocation",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": ["qty", "price", "sku"],
+        "rules": [{"role": "planner", "module": "inv", "action": "write", "column": "*", "effect": "allow"}],
+        "grants": [],
+        "agent_allowlist": [["inv", "write"]],
+        "origin_approvals": [],
+        "delegations": [
+          {
+            "id": "del-4",
+            "subject": "ag-inv-1",
+            "module": "inv",
+            "action": "write",
+            "columns": ["qty"],
+            "max_uses": 5,
+            "uses": 1,
+            "expires_at": 2000,
+            "revoked": true
+          }
+        ]
+      },
+      "request": {
+        "actor": {"kind": "agent", "subject": "ag-inv-1", "tier": "act"},
+        "home": "inv",
+        "target": "inv",
+        "action": "write",
+        "columns": ["qty"],
+        "origin_intent": null,
+        "delegation_id": "del-4"
+      },
+      "expected": {"code": "deny_delegation_revoked", "layer": "l1"}
+    },
+    {
+      "name": "a_delegation_cannot_be_used_past_its_rate_limit",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": ["qty", "price", "sku"],
+        "rules": [{"role": "planner", "module": "inv", "action": "write", "column": "*", "effect": "allow"}],
+        "grants": [],
+        "agent_allowlist": [["inv", "write"]],
+        "origin_approvals": [],
+        "delegations": [
+          {
+            "id": "del-5",
+            "subject": "ag-inv-1",
+            "module": "inv",
+            "action": "write",
+            "columns": ["qty"],
+            "max_uses": 2,
+            "uses": 2,
+            "expires_at": 2000,
+            "revoked": false
+          }
+        ]
+      },
+      "request": {
+        "actor": {"kind": "agent", "subject": "ag-inv-1", "tier": "act"},
+        "home": "inv",
+        "target": "inv",
+        "action": "write",
+        "columns": ["qty"],
+        "origin_intent": null,
+        "delegation_id": "del-5"
+      },
+      "expected": {"code": "deny_delegation_exhausted", "layer": "l1"}
+    },
+    {
+      "name": "a_delegation_cannot_be_re_delegated",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": ["qty", "price", "sku"],
+        "rules": [{"role": "planner", "module": "inv", "action": "write", "column": "*", "effect": "allow"}],
+        "grants": [],
+        "agent_allowlist": [["inv", "write"]],
+        "origin_approvals": [],
+        "delegations": [
+          {
+            "id": "del-6",
+            "subject": "ag-inv-1",
+            "module": "inv",
+            "action": "write",
+            "columns": ["qty"],
+            "max_uses": 5,
+            "uses": 0,
+            "expires_at": 2000,
+            "revoked": false
+          }
+        ]
+      },
+      "request": {
+        "actor": {"kind": "agent", "subject": "ag-other", "tier": "act"},
+        "home": "inv",
+        "target": "inv",
+        "action": "write",
+        "columns": ["qty"],
+        "origin_intent": null,
+        "delegation_id": "del-6"
+      },
+      "expected": {"code": "deny_delegation_missing", "layer": "l1"}
+    }
+  ]
+}

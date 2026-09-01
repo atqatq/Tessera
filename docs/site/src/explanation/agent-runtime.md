@@ -14,7 +14,9 @@ bounded by their L1 tier:
 - `observe` — read + report only (CONTRACTS)
 - `advise` — draft, rank, propose; humans commit
 - `act` — execute within an allowlist + ORIGIN approval (TRANSFORM,
-  FULFILL, INVENTORY, CONNECTORS)
+  FULFILL, INVENTORY, CONNECTORS). The approval is **delegable** —
+  see "ORIGIN delegation" below — so the key-holder is not a
+  synchronous bottleneck on every act-tier action.
 
 Dual reporting: agents signal **up** to the leader AI *and* **brief module
 users** scoped by role — dashboards, alerts, briefs. Signals carry
@@ -40,6 +42,39 @@ set (modules x actions x columns), rate limits, and a full audit trail.
 They rank and are ranked exactly like built-in agents. An agent that
 needs to *act* needs an allowlist and ORIGIN approval — there is no other
 door.
+
+## ORIGIN delegation
+
+As first specified, act-tier agents needed ORIGIN approval *per
+action* — in practice that makes the key-holder a synchronous
+bottleneck, and bottlenecks get routed around within a week. The
+delegation primitive fixes the bottleneck without loosening the
+model. A delegation is:
+
+- **scoped** — module × action × column set, enumerated, never `*`;
+- **time-boxed** — hard expiry, checked inclusively like every grant
+  (at the expiry instant it is already expired);
+- **rate-limited** — a use count and window, enforced before the
+  action runs;
+- **revocable** — revocation is a ledger-stamped fact; the next use
+  fails closed;
+- **ledger-stamped twice** — at issue and at *every* use (who, what,
+  which delegation, which columns);
+- **non-re-delegable** — a delegate cannot delegate. There is no
+  chain, by construction.
+
+The four deny-wins properties are the spec, written before any
+implementation and pinned as pending vectors
+(`reference/python/vectors/access_delegation.pending.vectors.json`;
+they activate when `kernel.delegation` lands): **a delegation cannot
+widen its own scope, cannot outlive its expiry, cannot survive
+revocation, and cannot be used past its rate limit.** The full
+rationale and the executable proptest source live in
+[ADR-0012](https://github.com/atqatq/Tessera/blob/main/docs/adr/0012-origin-delegation.md).
+
+Until the primitive ships, act-tier writes keep the per-action
+approval path in `kernel.access` (`deny_origin_approval_required`) —
+annoying by design, never silent.
 
 ## Guarantee
 
