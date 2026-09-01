@@ -29,7 +29,8 @@ tenant it serves.
 
 ## The picture
 
-The canonical topology diagram lives at
+The canonical system diagram — the **software development view**: kernel
+workspace, module crates, schemas, conformance, CI — lives at
 [`docs/diagrams/tessera-system-architecture.svg`](docs/diagrams/tessera-system-architecture.svg)
 (a PNG sits alongside it).
 
