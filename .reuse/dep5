@@ -1,0 +1,70 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Tessera
+Upstream-Contact: The Tessera Project
+Source: https://github.com/atqatq/Tessera
+Disclaimer: Tessera is Apache-2.0 with the Tessera naming requirement
+ (see LICENSE at the repository root): any product, deployment, or
+ derivative must visibly name Tessera. This DEP5 file covers licensing
+ (SPDX); it does not waive the naming requirement.
+
+Files: *
+Copyright: 2026 The Tessera Project
+License: Apache-2.0
+
+Files: LICENSE
+Copyright: 2026 The Tessera Project
+License: Apache-2.0
+
+Files: LICENSES/Apache-2.0.txt
+Copyright: Apache License 2.0 text - Apache Software Foundation
+License: Apache-2.0
+Comment: canonical license text, unmodified; the appendix lives in LICENSE
+
+Files: NOTICE
+Copyright: 2026 The Tessera Project
+License: Apache-2.0
+
+Files: .gitignore
+Copyright: 2026 The Tessera Project
+License: Apache-2.0
+
+Files: conformance/*.json
+Copyright: 2026 The Tessera Project
+License: Apache-2.0
+
+Files: schemas/*.json
+Copyright: 2026 The Tessera Project
+License: Apache-2.0
+
+Files: spokes/*/manifest.json
+Copyright: 2026 The Tessera Project
+License: Apache-2.0
+
+Files: *.md
+Copyright: 2026 The Tessera Project
+License: Apache-2.0
+
+Files: docs/specs/*.md
+Copyright: 2026 The Tessera Project
+License: Apache-2.0
+
+Files: .github/*.md
+Copyright: 2026 The Tessera Project
+License: Apache-2.0
+
+Files: .github/ISSUE_TEMPLATE/*.md
+Copyright: 2026 The Tessera Project
+License: Apache-2.0
+
+Files: .github/ISSUE_TEMPLATE/config.yml
+Copyright: 2026 The Tessera Project
+License: Apache-2.0
+
+Files: docs/diagrams/*.svg
+Copyright: 2026 The Tessera Project
+License: Apache-2.0
+
+Files: docs/diagrams/*.png
+Copyright: 2026 The Tessera Project
+License: Apache-2.0
+Comment: raster export of the canonical SVG diagram
