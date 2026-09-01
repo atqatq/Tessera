@@ -19,6 +19,14 @@ assessment. Do not open public issues for vulnerabilities.
 - Coordinated disclosure, 90-day window, credit unless you prefer otherwise.
 - Please respect data: no exfiltration of tenant data in testing.
 
+## CVEs
+
+Advisories accepted through GitHub's private vulnerability reporting are
+published as GitHub Security Advisories, and the project requests a
+CVE through GitHub's CNA as part of that process. Advisories land in
+the repo's Security tab; fixes ship on the supported branch above and
+are noted in the CHANGELOG with the advisory id.
+
 ## Guarantees the codebase is held to
 
 - ORIGIN is above root but **never** bypasses L0 (module state) or the ledger;

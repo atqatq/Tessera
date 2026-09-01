@@ -1,0 +1,6 @@
+# RFC 9116 security.txt — served from the docs site root at release.
+Contact: https://github.com/atqatq/Tessera/security/advisories/new
+Expires: 2027-09-02T00:00:00.000Z
+Canonical: https://tessera.dev/.well-known/security.txt
+Policy: https://github.com/atqatq/Tessera/blob/main/SECURITY.md
+Preferred-Languages: en
