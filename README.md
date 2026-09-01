@@ -20,7 +20,7 @@ tenant it serves.
 > derivative that uses Tessera must visibly name it — a "Powered by
 > **Tessera**" credit in the UI footer, about dialog, or product docs,
 > with a link to
-> [github.com/tessera-scm/tessera](https://github.com/tessera-scm/tessera).
+> [github.com/atqatq/Tessera](https://github.com/atqatq/Tessera).
 > Commercial or non-commercial: same rule. See
 > [LICENSE (Appendix)](LICENSE#appendix--tessera-naming-requirement),
 > [NOTICE](NOTICE), and [ATTRIBUTION.md](ATTRIBUTION.md).
@@ -143,7 +143,7 @@ retroactive. Benchmarking publishes p10/p50/p90 + party count only
 ## Quickstart
 
 ```bash
-git clone https://github.com/tessera-scm/tessera.git
+git clone https://github.com/atqatq/Tessera.git
 cd tessera
 docker compose up          # kernel + postgres + bus + plugin host (dev profile)
 open http://localhost:8080 # setup wizard = the adaptive spine
@@ -202,7 +202,7 @@ commercially or not — but you must name Tessera where your users can see it.
 The one-line credit:
 
 ```
-Powered by Tessera - https://github.com/tessera-scm/tessera
+Powered by Tessera - https://github.com/atqatq/Tessera
 ```
 
 Vendors may run it commercially; nobody may strip the credit. Compliance

@@ -8,6 +8,8 @@ on:
 jobs:
   rust:
     name: rust · fmt + clippy + test
+    # docs-first: activate automatically once the rust workspace lands
+    if: ${{ hashFiles('**/Cargo.toml') != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,6 +23,8 @@ jobs:
 
   python-reference:
     name: python · reference + vectors
+    # docs-first: activate automatically once the reference implementation lands
+    if: ${{ hashFiles('reference/python/**') != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
