@@ -1,0 +1,30 @@
+# cargo-deny — dependency policy (Part B2: allowlist enforced in CI).
+# Every entry here is mirrored in THIRD_PARTY_LICENSES.md when a dependency
+# is added; a new dependency also needs a justification line in the PR.
+
+[graph]
+all-features = true
+
+[licenses]
+version = 2
+# Permissive only. Anything else fails CI and needs an explicit, justified
+# policy addition — never a silent one.
+allow = [
+  "Apache-2.0",
+  "MIT",
+  "BSD-3-Clause",
+  "ISC",
+  "Unicode-3.0",
+  "Zlib",
+]
+confidence-threshold = 0.93
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+highlight = "all"
+
+[sources]
+unknown-registry = "warn"
+unknown-git = "warn"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]

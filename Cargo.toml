@@ -1,0 +1,41 @@
+[workspace]
+resolver = "2"
+# Members land as their TDD cycles complete; each crate adds itself in its
+# own commit so the workspace is green at every point in history.
+members = ["kernel/ids"]
+exclude = ["reference"]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+repository = "https://github.com/atqatq/Tessera"
+authors = ["The Tessera Project"]
+
+[workspace.dependencies]
+# Library dependencies are chosen once, for the whole workspace, with a
+# justification recorded here and in THIRD_PARTY_LICENSES.md (Part A5).
+thiserror = "2.0"      # prescribed by A4: typed errors for libraries
+proptest = "1.7"       # prescribed by A2: property-based invariants
+sha2 = "0.10"          # prescribed by Part 0.4/0.8: audited SHA-256, never hand-rolled
+serde_json = "1.0"     # conformance-vector consumption in tests only
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "deny"
+
+[workspace.lints.clippy]
+# Part A4: enforce with lints, not vigilance — no unwraps, expects, panics or
+# TODOs on any path reachable from input. Test code opts out locally, with a
+# comment, because a test crash is a signal, not a production hazard.
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+todo = "deny"
+unimplemented = "deny"
+dbg_macro = "deny"
+undocumented_unsafe_blocks = "deny"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

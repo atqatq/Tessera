@@ -11,3 +11,10 @@ coverage/
 *.profraw
 .DS_Store
 node_modules/
+
+# cargo-mutants output
+mutants.out*/
+# mdbook build output
+docs/site/book/
+# vhs recordings
+.vhs/

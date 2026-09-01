@@ -1,0 +1,16 @@
+[package]
+name = "tessera-ids"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Strongly-typed identifiers for the Tessera kernel: TenantId, ModuleId, SubjectId, RoleId, EpochMs."
+lints.workspace = true
+
+[dependencies]
+thiserror.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
