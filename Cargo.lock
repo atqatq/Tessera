@@ -276,6 +276,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "tessera-access"
+version = "0.1.0"
+dependencies = [
+ "proptest",
+ "tessera-ids",
+ "thiserror",
+]
+
+[[package]]
 name = "tessera-ids"
 version = "0.1.0"
 dependencies = [

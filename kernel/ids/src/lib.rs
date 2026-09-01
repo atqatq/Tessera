@@ -56,9 +56,20 @@ pub enum InvalidId {
     InvalidFirstChar(char),
 }
 
-/// Validates `s` against the shared grammar. Returns `Err` with the most
-/// specific reason found, scanning left to right.
-fn validate(s: &str) -> Result<(), InvalidId> {
+/// Validates `s` against the shared grammar, scanning left to right and
+/// returning the most specific rejection reason.
+///
+/// Exposed so sibling crates (e.g. the permission engine's intent refs)
+/// can validate identifiers without duplicating the grammar — one grammar,
+/// one implementation, one set of conformance vectors.
+///
+/// ```
+/// use tessera_ids::validate;
+///
+/// assert!(validate("kernel.access").is_ok());
+/// assert!(validate("Not valid").is_err());
+/// ```
+pub fn validate(s: &str) -> Result<(), InvalidId> {
     if s.is_empty() {
         return Err(InvalidId::Empty);
     }

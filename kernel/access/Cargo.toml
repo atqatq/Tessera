@@ -1,16 +1,17 @@
 [package]
-name = "tessera-ids"
+name = "tessera-access"
 version = "0.1.0"
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
-description = "Strongly-typed identifiers for the Tessera kernel: TenantId, ModuleId, SubjectId, RoleId, EpochMs."
+description = "Pure five-layer permission engine for the Tessera kernel: deny wins, default deny, no I/O."
 [lints]
 workspace = true
 
 [dependencies]
+tessera-ids = { path = "../ids" }
 thiserror.workspace = true
 
 [dev-dependencies]

@@ -1,0 +1,8 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 016f83b62c620c54ac0015acd312d87a679349a5b81ba5c92a86f333fdbb2e4f # shrinks to env = Env { now: EpochMs(0), module_enabled: true, known_columns: {"price", "qty", "sku"}, rules: [Rule { role: RoleId("planner"), module: ModuleId("inv"), action: Read, column: Glob("price"), effect: Allow }], grants: [Grant { owner: ModuleId("inv"), granted_to: ModuleId("ful"), columns: {"price"}, expires_at: None }], agent_allowlist: {(ModuleId("inv"), Write)}, origin_approvals: {(SubjectId("ag-1"), ModuleId("inv"), Write)} }, target = ModuleId("inv"), home = ModuleId("ful"), col = "price", expiry = 5, now = 5
+cc 4e344984ec8f70bea578bd052e49b9e769efd1ff83609493aa9f8758db64ba33 # shrinks to env = Env { now: EpochMs(0), module_enabled: true, known_columns: {"price", "qty", "sku"}, rules: [Rule { role: RoleId("op"), module: ModuleId("ord"), action: Propose, column: Glob("price"), effect: Allow }], grants: [], agent_allowlist: {(ModuleId("inv"), Write)}, origin_approvals: {(SubjectId("ag-1"), ModuleId("inv"), Write)} }, target = ModuleId("ord"), r = RoleId("op"), cols = ["price"]
