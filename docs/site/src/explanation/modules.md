@@ -1,6 +1,11 @@
 # The Module Registry
 
-Fourteen modules ship in-tree. All follow one contract; they differ in
+> **Design intent.** Fourteen modules are *specified* here, with one
+> contract between them. Exactly one — `inv` — is built and tested
+> (see the README status table); the rest are design intent, not a
+> schedule ([ROADMAP](https://github.com/atqatq/Tessera/blob/main/ROADMAP.md)).
+
+All fourteen follow one contract; they differ in
 domain depth, not in plumbing.
 
 ## The module contract

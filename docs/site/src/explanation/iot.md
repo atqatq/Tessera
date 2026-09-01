@@ -1,5 +1,8 @@
 # IoT, Native
 
+> **Design intent.** This page explains target behaviour; the README's
+> status table says what is built today. Specification, not claim.
+
 IoT is not an integration; it is a declared property of every module.
 
 ## Per-module telemetry

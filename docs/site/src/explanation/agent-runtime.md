@@ -1,5 +1,8 @@
 # Agent Runtime
 
+> **Design intent.** This page explains target behaviour; the README's
+> status table says what is built today. Specification, not claim.
+
 Two tiers of built-in agents, one runtime for user-defined agents, and
 hard rules about who may do what.
 

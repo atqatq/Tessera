@@ -10,9 +10,10 @@ inventory to contracts, without giving up control of your data.**
 
 Status: **the kernel is real and tested** — the permission engine, the
 hash-chained ledger, typed identifiers, the `inv` safety-stock core,
-and a Python reference that must agree byte-for-byte (63 Rust tests,
-7 reference tests, conformance vectors). **Everything else in the docs
-is specified, not built** — the table below does not lie.
+and a Python reference that must agree byte-for-byte on committed
+conformance vectors. Run `make test`; the suite is the count.
+**Everything else in the docs is specified, not built** — the table
+below does not lie.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/site/src/assets/v0x-architecture-dark.svg">

@@ -1,5 +1,8 @@
 # The Adaptive Spine
 
+> **Design intent.** This page explains target behaviour; the README's
+> status table says what is built today. Specification, not claim.
+
 The kernel's setup capability: the system is industry- and niche-agnostic, and
 the spine morphs it to *your* supply chain during onboarding — a spine the whole organism hangs on.
 

@@ -1,7 +1,12 @@
 # Architecture
 
+> **Design intent.** This page explains the target design. What is
+> built today is stated in the README's status table — the two must
+> never be confused, and where this page describes an unbuilt part,
+> that is specification, not a claim.
+
 The canonical diagram: [tessera-system-architecture.svg](../assets/tessera-system-architecture.svg)
-(rendered in the repo root README).
+(a design-intent view; the built v0.x picture is in the README).
 
 ## Topology
 
@@ -12,7 +17,7 @@ The canonical diagram: [tessera-system-architecture.svg](../assets/tessera-syste
                             |     THE KERNEL    |   AI-native control plane
                             |  12 services   |   sole authority, all events
                             +----------------+
-                               |  |  |  |        1,000,000 msg/sec duplex
+                               |  |  |  |        the event bus (specified — no
         +----------+-----------+  |  +----------+----------+
         |          |              |             |          |
       14 MODULES   ... kernel-brokered peer access ...  module logs
@@ -37,11 +42,15 @@ The canonical diagram: [tessera-system-architecture.svg](../assets/tessera-syste
    trusted (L0-L3). Across the grid nobody trusts anybody's kernel (L-1 +
    sharing contracts + notary).
 
-## Message bus
+## Message bus (specified, not built)
 
-Duplex, per-tenant hash-chaining of event streams, backpressure-aware.
-Every transaction, action, and event — kernel or module — is recorded; the
-ledger is the system of record for state, the master log for agency.
+The design calls for a duplex, per-tenant hash-chaining of event
+streams, backpressure-aware. No throughput number appears here on
+purpose: a performance claim returns only with a committed benchmark
+and a CI regression gate (Part F.3), and the bus does not exist yet.
+Every transaction, action, and event — kernel or module — is to be
+recorded; the ledger is the system of record for state, the master
+log for agency.
 
 ## Why Rust + Python
 
