@@ -1,0 +1,300 @@
+{
+  "domain": "tessera-ledger/1",
+  "algorithm": "SHA-256(\"tessera-ledger/1\" || tenant || 0x00 || prev || u64be(height) || u64be(valid_ms) || u64be(system_ms) || u32be(payload_len) || payload)",
+  "cases": [
+    {
+      "name": "genesis_single_entry",
+      "tenant": "acme",
+      "entries": [
+        {
+          "height": 0,
+          "valid_ms": 1700000000000,
+          "system_ms": 1700000000050,
+          "payload_hex": "6f726465722331"
+        }
+      ],
+      "tamper": null,
+      "expected": {
+        "records": [
+          {
+            "prev_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "hash_hex": "93b05beda945c8d1fb5617a24c6b816d25b8236d6385eef1e29abdc5f7be7db5",
+            "height": 0
+          }
+        ],
+        "first_broken_height": null
+      }
+    },
+    {
+      "name": "chain_of_three",
+      "tenant": "acme",
+      "entries": [
+        {
+          "height": 0,
+          "valid_ms": 1700000000000,
+          "system_ms": 1700000000050,
+          "payload_hex": "6576656e742d30"
+        },
+        {
+          "height": 1,
+          "valid_ms": 1700000000001,
+          "system_ms": 1700000000051,
+          "payload_hex": "6576656e742d31"
+        },
+        {
+          "height": 2,
+          "valid_ms": 1700000000002,
+          "system_ms": 1700000000052,
+          "payload_hex": "6576656e742d32"
+        }
+      ],
+      "tamper": null,
+      "expected": {
+        "records": [
+          {
+            "prev_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "hash_hex": "f82bd5fc54e19e3b962425e88ac44143b398843d781bd3822535ee0e4e001818",
+            "height": 0
+          },
+          {
+            "prev_hex": "f82bd5fc54e19e3b962425e88ac44143b398843d781bd3822535ee0e4e001818",
+            "hash_hex": "df7caa120a2ffb23709a90459c89e3eebd35a2b05be700294fbc677f164f765d",
+            "height": 1
+          },
+          {
+            "prev_hex": "df7caa120a2ffb23709a90459c89e3eebd35a2b05be700294fbc677f164f765d",
+            "hash_hex": "d937e4ba179b40c133fe90c3a18b39db053c764d3661eb606a333835923e610e",
+            "height": 2
+          }
+        ],
+        "first_broken_height": null
+      }
+    },
+    {
+      "name": "payload_tamper_detected_at_exact_height",
+      "tenant": "acme",
+      "entries": [
+        {
+          "height": 0,
+          "valid_ms": 1700000000000,
+          "system_ms": 1700000000050,
+          "payload_hex": "6576656e742d30"
+        },
+        {
+          "height": 1,
+          "valid_ms": 1700000000001,
+          "system_ms": 1700000000051,
+          "payload_hex": "6576656e742d31"
+        },
+        {
+          "height": 2,
+          "valid_ms": 1700000000002,
+          "system_ms": 1700000000052,
+          "payload_hex": "6576656e742d32"
+        }
+      ],
+      "tamper": {
+        "kind": "payload",
+        "record": 1,
+        "byte": 0
+      },
+      "expected": {
+        "records": [
+          {
+            "prev_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "hash_hex": "f82bd5fc54e19e3b962425e88ac44143b398843d781bd3822535ee0e4e001818",
+            "height": 0
+          },
+          {
+            "prev_hex": "f82bd5fc54e19e3b962425e88ac44143b398843d781bd3822535ee0e4e001818",
+            "hash_hex": "df7caa120a2ffb23709a90459c89e3eebd35a2b05be700294fbc677f164f765d",
+            "height": 1
+          },
+          {
+            "prev_hex": "df7caa120a2ffb23709a90459c89e3eebd35a2b05be700294fbc677f164f765d",
+            "hash_hex": "d937e4ba179b40c133fe90c3a18b39db053c764d3661eb606a333835923e610e",
+            "height": 2
+          }
+        ],
+        "first_broken_height": 1
+      }
+    },
+    {
+      "name": "hash_tamper_detected_at_exact_height",
+      "tenant": "acme",
+      "entries": [
+        {
+          "height": 0,
+          "valid_ms": 1700000000000,
+          "system_ms": 1700000000050,
+          "payload_hex": "6576656e742d30"
+        },
+        {
+          "height": 1,
+          "valid_ms": 1700000000001,
+          "system_ms": 1700000000051,
+          "payload_hex": "6576656e742d31"
+        },
+        {
+          "height": 2,
+          "valid_ms": 1700000000002,
+          "system_ms": 1700000000052,
+          "payload_hex": "6576656e742d32"
+        }
+      ],
+      "tamper": {
+        "kind": "hash",
+        "record": 0,
+        "byte": 7
+      },
+      "expected": {
+        "records": [
+          {
+            "prev_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "hash_hex": "f82bd5fc54e19e3a962425e88ac44143b398843d781bd3822535ee0e4e001818",
+            "height": 0
+          },
+          {
+            "prev_hex": "f82bd5fc54e19e3b962425e88ac44143b398843d781bd3822535ee0e4e001818",
+            "hash_hex": "df7caa120a2ffb23709a90459c89e3eebd35a2b05be700294fbc677f164f765d",
+            "height": 1
+          },
+          {
+            "prev_hex": "df7caa120a2ffb23709a90459c89e3eebd35a2b05be700294fbc677f164f765d",
+            "hash_hex": "d937e4ba179b40c133fe90c3a18b39db053c764d3661eb606a333835923e610e",
+            "height": 2
+          }
+        ],
+        "first_broken_height": 0
+      }
+    },
+    {
+      "name": "prev_tamper_detected_at_exact_height",
+      "tenant": "acme",
+      "entries": [
+        {
+          "height": 0,
+          "valid_ms": 1700000000000,
+          "system_ms": 1700000000050,
+          "payload_hex": "6576656e742d30"
+        },
+        {
+          "height": 1,
+          "valid_ms": 1700000000001,
+          "system_ms": 1700000000051,
+          "payload_hex": "6576656e742d31"
+        },
+        {
+          "height": 2,
+          "valid_ms": 1700000000002,
+          "system_ms": 1700000000052,
+          "payload_hex": "6576656e742d32"
+        }
+      ],
+      "tamper": {
+        "kind": "prev",
+        "record": 2,
+        "byte": 3
+      },
+      "expected": {
+        "records": [
+          {
+            "prev_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "hash_hex": "f82bd5fc54e19e3b962425e88ac44143b398843d781bd3822535ee0e4e001818",
+            "height": 0
+          },
+          {
+            "prev_hex": "f82bd5fc54e19e3b962425e88ac44143b398843d781bd3822535ee0e4e001818",
+            "hash_hex": "df7caa120a2ffb23709a90459c89e3eebd35a2b05be700294fbc677f164f765d",
+            "height": 1
+          },
+          {
+            "prev_hex": "df7caa130a2ffb23709a90459c89e3eebd35a2b05be700294fbc677f164f765d",
+            "hash_hex": "d937e4ba179b40c133fe90c3a18b39db053c764d3661eb606a333835923e610e",
+            "height": 2
+          }
+        ],
+        "first_broken_height": 2
+      }
+    },
+    {
+      "name": "empty_payload_entry",
+      "tenant": "acme",
+      "entries": [
+        {
+          "height": 0,
+          "valid_ms": 1700000000000,
+          "system_ms": 1700000000050,
+          "payload_hex": ""
+        },
+        {
+          "height": 1,
+          "valid_ms": 1700000000001,
+          "system_ms": 1700000000051,
+          "payload_hex": "78"
+        }
+      ],
+      "tamper": null,
+      "expected": {
+        "records": [
+          {
+            "prev_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "hash_hex": "3c8955eb55212623dd50f4b3926ff0c9f4c69d10cb70a25dfe35f9f2d6135cff",
+            "height": 0
+          },
+          {
+            "prev_hex": "3c8955eb55212623dd50f4b3926ff0c9f4c69d10cb70a25dfe35f9f2d6135cff",
+            "hash_hex": "dfa3581c66f4ef658cc25719eb960826a582f77942e121382a98738926490ff0",
+            "height": 1
+          }
+        ],
+        "first_broken_height": null
+      }
+    },
+    {
+      "name": "cross_tenant_same_events_different_hashes",
+      "tenant": "otherco",
+      "entries": [
+        {
+          "height": 0,
+          "valid_ms": 1700000000000,
+          "system_ms": 1700000000050,
+          "payload_hex": "6576656e742d30"
+        },
+        {
+          "height": 1,
+          "valid_ms": 1700000000001,
+          "system_ms": 1700000000051,
+          "payload_hex": "6576656e742d31"
+        },
+        {
+          "height": 2,
+          "valid_ms": 1700000000002,
+          "system_ms": 1700000000052,
+          "payload_hex": "6576656e742d32"
+        }
+      ],
+      "tamper": null,
+      "expected": {
+        "records": [
+          {
+            "prev_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "hash_hex": "1d78dc15dce20418b59dec61be184ddf978de99ad9642d02064e8a728f7aa118",
+            "height": 0
+          },
+          {
+            "prev_hex": "1d78dc15dce20418b59dec61be184ddf978de99ad9642d02064e8a728f7aa118",
+            "hash_hex": "65579d90ccb7fa8bcc739c153ac2a1ccb2d70b595a41b3d24fe8b7f44cdbc13b",
+            "height": 1
+          },
+          {
+            "prev_hex": "65579d90ccb7fa8bcc739c153ac2a1ccb2d70b595a41b3d24fe8b7f44cdbc13b",
+            "hash_hex": "75ee115ec825b5fa5b4ac620d7511a403b4320a2f543126d2868ec61776eff0a",
+            "height": 2
+          }
+        ],
+        "first_broken_height": null
+      }
+    }
+  ]
+}

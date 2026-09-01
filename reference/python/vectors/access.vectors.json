@@ -1,0 +1,1287 @@
+{
+  "domain": "tessera-access/1",
+  "codes": [
+    "allow_origin",
+    "allow_tier",
+    "allow_grant",
+    "allow_rule",
+    "deny_module_disabled",
+    "deny_intent_required",
+    "deny_tier_insufficient",
+    "deny_agent_not_allowlisted",
+    "deny_origin_approval_required",
+    "deny_grant_missing",
+    "deny_grant_expired",
+    "deny_rule_explicit",
+    "deny_column_unknown",
+    "deny_default"
+  ],
+  "cases": [
+    {
+      "name": "origin_with_recorded_intent_is_allowed",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "read",
+        "columns": [
+          "sku"
+        ],
+        "actor": {
+          "kind": "origin",
+          "subject": "root"
+        },
+        "home": "inv",
+        "origin_intent": "int-1"
+      },
+      "expected": {
+        "code": "allow_origin",
+        "layer": "origin"
+      }
+    },
+    {
+      "name": "planner_read_is_allowed_by_star_rule",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "read",
+        "columns": [
+          "sku"
+        ],
+        "actor": {
+          "kind": "user",
+          "subject": "u-1",
+          "role": "planner"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "allow_rule",
+        "layer": "l3"
+      }
+    },
+    {
+      "name": "agent_read_is_allowed_by_tier",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "read",
+        "columns": [
+          "sku"
+        ],
+        "actor": {
+          "kind": "agent",
+          "subject": "ag-inv-1",
+          "tier": "observe"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "allow_tier",
+        "layer": "l1"
+      }
+    },
+    {
+      "name": "covered_peer_read_is_allowed_by_grant",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          },
+          {
+            "role": "planner",
+            "module": "ord",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [
+          {
+            "owner": "ord",
+            "granted_to": "ful",
+            "columns": [
+              "sku",
+              "qty"
+            ],
+            "expires_at": null
+          }
+        ],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "ord",
+        "action": "read",
+        "columns": [
+          "sku"
+        ],
+        "actor": {
+          "kind": "user",
+          "subject": "u-1",
+          "role": "planner"
+        },
+        "home": "ful",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "allow_grant",
+        "layer": "l2"
+      }
+    },
+    {
+      "name": "a_disabled_module_gates_everyone_including_origin",
+      "env": {
+        "now": 1000,
+        "module_enabled": false,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "read",
+        "columns": [],
+        "actor": {
+          "kind": "origin",
+          "subject": "root"
+        },
+        "home": "inv",
+        "origin_intent": "int-1"
+      },
+      "expected": {
+        "code": "deny_module_disabled",
+        "layer": "l0"
+      }
+    },
+    {
+      "name": "origin_without_recorded_intent_is_refused",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "read",
+        "columns": [
+          "sku"
+        ],
+        "actor": {
+          "kind": "origin",
+          "subject": "root"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "deny_intent_required",
+        "layer": "origin"
+      }
+    },
+    {
+      "name": "observe_agent_may_not_propose",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "propose",
+        "columns": [
+          "qty"
+        ],
+        "actor": {
+          "kind": "agent",
+          "subject": "ag-inv-1",
+          "tier": "observe"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "deny_tier_insufficient",
+        "layer": "l1"
+      }
+    },
+    {
+      "name": "act_agent_write_needs_an_allowlist_entry",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "write",
+        "columns": [
+          "qty"
+        ],
+        "actor": {
+          "kind": "agent",
+          "subject": "ag-inv-1",
+          "tier": "act"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "deny_agent_not_allowlisted",
+        "layer": "l1"
+      }
+    },
+    {
+      "name": "act_agent_write_needs_origin_approval_even_when_allowlisted",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [
+          [
+            "inv",
+            "write"
+          ]
+        ],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "write",
+        "columns": [
+          "qty"
+        ],
+        "actor": {
+          "kind": "agent",
+          "subject": "ag-inv-1",
+          "tier": "act"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "deny_origin_approval_required",
+        "layer": "l1"
+      }
+    },
+    {
+      "name": "peer_read_requires_a_grant",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "ord",
+        "action": "read",
+        "columns": [
+          "sku"
+        ],
+        "actor": {
+          "kind": "user",
+          "subject": "u-1",
+          "role": "planner"
+        },
+        "home": "ful",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "deny_grant_missing",
+        "layer": "l2"
+      }
+    },
+    {
+      "name": "an_expired_grant_is_denied_at_the_expiry_instant",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          },
+          {
+            "role": "planner",
+            "module": "ord",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [
+          {
+            "owner": "ord",
+            "granted_to": "ful",
+            "columns": [
+              "sku"
+            ],
+            "expires_at": 1000
+          }
+        ],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "ord",
+        "action": "read",
+        "columns": [
+          "sku"
+        ],
+        "actor": {
+          "kind": "user",
+          "subject": "u-1",
+          "role": "planner"
+        },
+        "home": "ful",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "deny_grant_expired",
+        "layer": "l2"
+      }
+    },
+    {
+      "name": "explicit_deny_beats_allow_on_the_same_column",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          },
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "price",
+            "effect": "deny"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "read",
+        "columns": [
+          "price"
+        ],
+        "actor": {
+          "kind": "user",
+          "subject": "u-1",
+          "role": "planner"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "deny_rule_explicit",
+        "layer": "l3"
+      }
+    },
+    {
+      "name": "unknown_column_is_denied",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "read",
+        "columns": [
+          "not_a_column"
+        ],
+        "actor": {
+          "kind": "user",
+          "subject": "u-1",
+          "role": "planner"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "deny_column_unknown",
+        "layer": "l3"
+      }
+    },
+    {
+      "name": "uncovered_column_falls_through_to_default_deny",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "read",
+        "columns": [
+          "qty"
+        ],
+        "actor": {
+          "kind": "user",
+          "subject": "u-1",
+          "role": "planner"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "deny_default",
+        "layer": "l3"
+      }
+    },
+    {
+      "name": "origin_bypasses_unknown_columns_and_rules",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "read",
+        "columns": [
+          "not_a_column"
+        ],
+        "actor": {
+          "kind": "origin",
+          "subject": "root"
+        },
+        "home": "inv",
+        "origin_intent": "int-1"
+      },
+      "expected": {
+        "code": "allow_origin",
+        "layer": "origin"
+      }
+    },
+    {
+      "name": "propose_is_judged_by_the_write_rules",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          },
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "write",
+            "column": "qty",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "propose",
+        "columns": [
+          "qty"
+        ],
+        "actor": {
+          "kind": "user",
+          "subject": "u-1",
+          "role": "planner"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "allow_rule",
+        "layer": "l3"
+      }
+    },
+    {
+      "name": "write_uses_the_same_rules_as_propose",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          },
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "write",
+            "column": "qty",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "write",
+        "columns": [
+          "qty"
+        ],
+        "actor": {
+          "kind": "user",
+          "subject": "u-1",
+          "role": "planner"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "allow_rule",
+        "layer": "l3"
+      }
+    },
+    {
+      "name": "a_module_level_read_needs_the_star_rule",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "read",
+        "columns": [],
+        "actor": {
+          "kind": "user",
+          "subject": "u-1",
+          "role": "planner"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "allow_rule",
+        "layer": "l3"
+      }
+    },
+    {
+      "name": "a_module_level_read_without_star_rule_is_denied",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "read",
+        "columns": [],
+        "actor": {
+          "kind": "user",
+          "subject": "u-1",
+          "role": "planner"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "deny_default",
+        "layer": "l3"
+      }
+    },
+    {
+      "name": "glob_exact_rules_do_not_match_longer_names",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "qty",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "read",
+        "columns": [
+          "qty_reserved"
+        ],
+        "actor": {
+          "kind": "user",
+          "subject": "u-1",
+          "role": "planner"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "deny_column_unknown",
+        "layer": "l3"
+      }
+    },
+    {
+      "name": "a_grant_must_cover_every_requested_column",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          },
+          {
+            "role": "planner",
+            "module": "ord",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [
+          {
+            "owner": "ord",
+            "granted_to": "ful",
+            "columns": [
+              "qty"
+            ],
+            "expires_at": null
+          }
+        ],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "ord",
+        "action": "read",
+        "columns": [
+          "sku",
+          "qty"
+        ],
+        "actor": {
+          "kind": "user",
+          "subject": "u-1",
+          "role": "planner"
+        },
+        "home": "ful",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "deny_grant_missing",
+        "layer": "l2"
+      }
+    },
+    {
+      "name": "peer_writes_do_not_exist_as_an_operation",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          },
+          {
+            "role": "planner",
+            "module": "ord",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [
+          {
+            "owner": "ord",
+            "granted_to": "ful",
+            "columns": [
+              "qty"
+            ],
+            "expires_at": null
+          }
+        ],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "ord",
+        "action": "write",
+        "columns": [
+          "qty"
+        ],
+        "actor": {
+          "kind": "user",
+          "subject": "u-1",
+          "role": "planner"
+        },
+        "home": "ful",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "deny_default",
+        "layer": "l2"
+      }
+    },
+    {
+      "name": "agent_peer_read_is_allowed_by_grant",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          },
+          {
+            "role": "planner",
+            "module": "ord",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [
+          {
+            "owner": "ord",
+            "granted_to": "inv",
+            "columns": [
+              "sku"
+            ],
+            "expires_at": null
+          }
+        ],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "ord",
+        "action": "read",
+        "columns": [
+          "sku"
+        ],
+        "actor": {
+          "kind": "agent",
+          "subject": "ag-inv-1",
+          "tier": "observe"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "allow_grant",
+        "layer": "l2"
+      }
+    },
+    {
+      "name": "agent_peer_read_without_grant_is_denied",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          },
+          {
+            "role": "planner",
+            "module": "ord",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [
+          {
+            "owner": "ord",
+            "granted_to": "ful",
+            "columns": [
+              "qty"
+            ],
+            "expires_at": null
+          }
+        ],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "ord",
+        "action": "read",
+        "columns": [
+          "sku"
+        ],
+        "actor": {
+          "kind": "agent",
+          "subject": "ag-inv-1",
+          "tier": "observe"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "deny_grant_missing",
+        "layer": "l2"
+      }
+    },
+    {
+      "name": "allowlisted_and_approved_act_agent_may_write",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [
+          [
+            "inv",
+            "write"
+          ]
+        ],
+        "origin_approvals": [
+          [
+            "ag-inv-1",
+            "inv",
+            "write"
+          ]
+        ]
+      },
+      "request": {
+        "target": "inv",
+        "action": "write",
+        "columns": [
+          "qty"
+        ],
+        "actor": {
+          "kind": "agent",
+          "subject": "ag-inv-1",
+          "tier": "act"
+        },
+        "home": "inv",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "allow_tier",
+        "layer": "l1"
+      }
+    },
+    {
+      "name": "kernel_level_user_without_home_is_judged_by_rules_alone",
+      "env": {
+        "now": 1000,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          },
+          {
+            "role": "auditor",
+            "module": "inv",
+            "action": "read",
+            "column": "price",
+            "effect": "allow"
+          }
+        ],
+        "grants": [],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "inv",
+        "action": "read",
+        "columns": [
+          "price"
+        ],
+        "actor": {
+          "kind": "user",
+          "subject": "u-audit",
+          "role": "auditor"
+        },
+        "home": null,
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "allow_rule",
+        "layer": "l3"
+      }
+    },
+    {
+      "name": "a_grant_one_tick_before_expiry_still_allows",
+      "env": {
+        "now": 999,
+        "module_enabled": true,
+        "known_columns": [
+          "sku",
+          "qty",
+          "price"
+        ],
+        "rules": [
+          {
+            "role": "planner",
+            "module": "inv",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          },
+          {
+            "role": "planner",
+            "module": "ord",
+            "action": "read",
+            "column": "*",
+            "effect": "allow"
+          }
+        ],
+        "grants": [
+          {
+            "owner": "ord",
+            "granted_to": "ful",
+            "columns": [
+              "sku"
+            ],
+            "expires_at": 1000
+          }
+        ],
+        "agent_allowlist": [],
+        "origin_approvals": []
+      },
+      "request": {
+        "target": "ord",
+        "action": "read",
+        "columns": [
+          "sku"
+        ],
+        "actor": {
+          "kind": "user",
+          "subject": "u-1",
+          "role": "planner"
+        },
+        "home": "ful",
+        "origin_intent": null
+      },
+      "expected": {
+        "code": "allow_grant",
+        "layer": "l2"
+      }
+    }
+  ]
+}
