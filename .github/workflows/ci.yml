@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2026 The Tessera Project
+# SPDX-License-Identifier: Apache-2.0
+#
+# CI = the same gates as `make check`, split so a failure names its gate.
+
 name: ci
 
 on:
@@ -6,10 +11,45 @@ on:
   pull_request:
 
 jobs:
+  docs:
+    name: docs - attribution + governance present
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: NOTICE + naming requirement present
+        run: |
+          grep -q "TESSERA NAMING REQUIREMENT" LICENSE
+          grep -q "Powered by Tessera" NOTICE
+          grep -q "Powered by Tessera" README.md
+      - name: governance documents present
+        run: |
+          test -f GOVERNANCE.md
+          test -f SECURITY.md
+          test -f CONTRIBUTING.md
+          test -f CODE_OF_CONDUCT.md
+
+  reuse:
+    name: reuse - SPDX licensing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: fsfe/reuse-action@v5
+
+  python-reference:
+    name: python - reference + vectors
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e reference/python
+      - run: pytest reference/python -q
+      - name: spoke manifests pass the independence gate
+        run: python tools/check_manifests.py 'spokes/*/manifest.json'
+
   rust:
-    name: rust · fmt + clippy + test
-    # docs-first: activate automatically once the rust workspace lands
-    if: ${{ hashFiles('**/Cargo.toml') != '' }}
+    name: rust - fmt + clippy + test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,28 +61,20 @@ jobs:
       - run: cargo clippy --workspace --all-targets -- -D warnings
       - run: cargo test --workspace
 
-  python-reference:
-    name: python · reference + vectors
-    # docs-first: activate automatically once the reference implementation lands
-    if: ${{ hashFiles('reference/python/**') != '' }}
+  dco:
+    name: dco - every commit signed off
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-      - run: pip install -e reference/python
-      - run: pytest reference/python -q
-      - name: conformance vectors vs schemas
-        run: python reference/python/tools/check_manifests.py
-
-  docs:
-    name: docs · links & attribution check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: NOTICE + naming requirement present
+          fetch-depth: 0
+      - name: DCO 1.1 sign-off present on all commits
         run: |
-          grep -q "TESSERA NAMING REQUIREMENT" LICENSE
-          grep -q "Powered by Tessera" NOTICE
-          grep -q "Powered by Tessera" README.md
+          missing=0
+          for sha in $(git rev-list origin/main..HEAD 2>/dev/null || git rev-list HEAD --not --remotes=origin); do
+            if ! git log -1 --format='%(trailers:key=Signed-off-by)' "$sha" | grep -q '.'; then
+              echo "commit $sha is missing a Signed-off-by trailer"
+              missing=1
+            fi
+          done
+          exit $missing
