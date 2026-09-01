@@ -201,37 +201,3 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
---------------------------------------------------------------------------------
-
-## APPENDIX — TESSERA NAMING REQUIREMENT
-
-This appendix is an additional condition on public use of the Work,
-accepted by any use, reproduction, or distribution of the Work after
-this requirement was published. It grants one additional trademark
-permission (per Section 6) and imposes one additional condition.
-
-**Permission.** You may use the name "Tessera" and the
-phrase "Powered by Tessera" solely to identify the origin of the
-Work and to satisfy the attribution condition below.
-
-**Condition.** Any product, service, deployment, or derivative work that
-uses the Work (in Source or Object form) must provide visible attribution
-to the end user in at least one of the following places:
-
-  (a) a "Powered by Tessera" credit in the primary user interface
-      footer or about dialog, linking to
-      https://github.com/atqatq/Tessera ; or
-  (b) the same credit in your product documentation, website, or
-      distribution's README.
-
-Embedded/firmware distributions must include the credit in accompanying
-documentation and in the device's about/settings screen where present.
-
-**Removal for internal use.** Deployments with no external end users
-(internal company use) satisfy this condition by retaining the credit in
-source, NOTICE, and internal documentation.
-
-**Why.** Tessera is open source because trust in supply chain
-infrastructure requires scrutiny; it requires naming because adoption
-credit is the only return the project asks. Vendors may run it
-commercially — nobody may strip the credit.

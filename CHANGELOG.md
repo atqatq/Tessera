@@ -40,7 +40,25 @@ crates stabilise).
   codebase, including the design flaw the properties caught.
 
 ### Removed
-- Nothing yet in this cycle.
+- The "Tessera naming requirement" appendix from `LICENSE` and
+  `ATTRIBUTION.md`: the licence is now plain Apache-2.0, and the name
+  is protected by `TRADEMARK.md` instead of a licence condition
+  (Apache-2.0 §4 does not permit conditions on the grant, and a
+  bespoke appendix defeated SPDX classification and corporate legal
+  review). The CI attribution grep went with it.
+
+### Added
+- `TRADEMARK.md`: nominative use permitted, forks rename, no implied
+  endorsement — the Rust/Linux/Kubernetes/PostgreSQL posture.
+- `LICENSING.md`: the patent position in plain language, DCO not CLA,
+  third-party licence policy, corporate-CLA handling, export-control
+  note.
+- `GOVERNANCE.md`, `THIRD_PARTY_LICENSES.md`, `MAINTAINERS.md`,
+  `ADOPTERS.md` (see below as they land).
+
+### Changed
+- `NOTICE` rewritten for plain Apache-2.0 with the trademark
+  distinction stated.
 
 ## [0.1.0] — architecture seed
 

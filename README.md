@@ -9,21 +9,10 @@ sharing trust. One spine at any scale: the same system runs a global
 enterprise and a two-person shop, with every capability scoped to the
 tenant it serves.
 
-![license](https://img.shields.io/badge/license-Apache--2.0%20%2B%20naming-blue)
-![attribution](https://img.shields.io/badge/attribution-required-orange)
+![license](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![rust](https://img.shields.io/badge/core-rust-dea584)
 ![python](https://img.shields.io/badge/reference-python-3670A0)
 ![PRs](https://img.shields.io/badge/PRs-welcome-6E96E8)
-
-> **Attribution — use requires naming.** Tessera is open source under
-> Apache-2.0 **plus one condition**: any product, deployment, or
-> derivative that uses Tessera must visibly name it — a "Powered by
-> **Tessera**" credit in the UI footer, about dialog, or product docs,
-> with a link to
-> [github.com/atqatq/Tessera](https://github.com/atqatq/Tessera).
-> Commercial or non-commercial: same rule. See
-> [LICENSE (Appendix)](LICENSE#appendix--tessera-naming-requirement),
-> [NOTICE](NOTICE), and [ATTRIBUTION.md](ATTRIBUTION.md).
 
 ---
 
@@ -194,17 +183,16 @@ Propose your own via [feature template](.github/ISSUE_TEMPLATE/feature_request.m
 Read [CONTRIBUTING.md](CONTRIBUTING.md). Vector-first: behavior changes ship
 with conformance vectors. Design tokens: monotone zinc + exactly one accent.
 
-## License & attribution
+## License
 
-Apache-2.0 — **plus the Tessera naming requirement** (see
-[LICENSE Appendix](LICENSE#appendix--tessera-naming-requirement) and
-[NOTICE](NOTICE)). In short: free to use, study, modify, and ship —
-commercially or not — but you must name Tessera where your users can see it.
-The one-line credit:
+Plain [Apache-2.0](LICENSE) — no added conditions, no appendix. That is
+the point: SPDX scanners classify it, corporate legal approves it in an
+afternoon, and Apache-2.0's §3 patent grant protects users and
+downstream infrastructures alike (see [LICENSING.md](LICENSING.md) for
+the plain-language patent position).
 
-```
-Powered by Tessera - https://github.com/atqatq/Tessera
-```
-
-Vendors may run it commercially; nobody may strip the credit. Compliance
-recipes for apps, forks, SaaS, and embedded builds: [ATTRIBUTION.md](ATTRIBUTION.md).
+The **name** "Tessera" is protected by [TRADEMARK.md](TRADEMARK.md),
+not by the licence: nominative use ("built with Tessera",
+"Tessera-compatible") is always permitted; forks rename. Third-party
+dependencies and vendored assets are listed in
+[THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
