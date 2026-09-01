@@ -1,0 +1,13 @@
+/target
+/dist
+__pycache__/
+*.pyc
+.venv/
+.env
+.env.*
+!.env.example
+*.local.toml
+coverage/
+*.profraw
+.DS_Store
+node_modules/

@@ -1,0 +1,44 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  rust:
+    name: rust · fmt + clippy + test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+      - run: cargo test --workspace
+
+  python-reference:
+    name: python · reference + vectors
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e reference/python
+      - run: pytest reference/python -q
+      - name: conformance vectors vs schemas
+        run: python reference/python/tools/check_manifests.py
+
+  docs:
+    name: docs · links & attribution check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: NOTICE + naming requirement present
+        run: |
+          grep -q "TESSERA NAMING REQUIREMENT" LICENSE
+          grep -q "Powered by Tessera" NOTICE
+          grep -q "Powered by Tessera" README.md
