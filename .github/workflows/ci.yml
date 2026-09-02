@@ -184,6 +184,12 @@ jobs:
         with:
           command: check
           arguments: --workspace
+        # The action runs inside its own container, which ships one
+        # toolchain and none of ours. Without this override rustup
+        # reads rust-toolchain.toml, demands 1.98.0-musl and dies
+        # before cargo-deny executes a single check.
+        env:
+          RUSTUP_TOOLCHAIN: stable
 
   reuse:
     # B3: REUSE-compliant SPDX coverage of every file, machine-checked.
