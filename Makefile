@@ -10,13 +10,13 @@
 # --- gates (fast first, so failures surface early) -----------------------
 
 fmt:            ## cargo fmt --check (rust code shape)
-	cargo fmt --all -- --check
+	cd rust && cargo fmt --all -- --check
 
 clippy:         ## clippy with the workspace robustness lints, deny warnings
-	cargo clippy --workspace --all-targets -- -D warnings
+	cd rust && cargo clippy --workspace --all-targets -- -D warnings
 
 test-rust:      ## rust test suite, conformance vectors included
-	cargo test --workspace
+	cd rust && cargo test --workspace
 
 test-py:        ## python reference suite (168 tests)
 	pytest reference/python -q
@@ -37,8 +37,8 @@ check: fmt clippy test-rust test-py manifests reuse
 # --- conveniences ---------------------------------------------------------
 
 fmt-fix:        ## apply rustfmt (the only auto-formatter)
-	cargo fmt --all
+	cd rust && cargo fmt --all
 
 clean:
-	cargo clean
+	cd rust && cargo clean
 	rm -rf reference/python/.pytest_cache reference/python/**/__pycache__
