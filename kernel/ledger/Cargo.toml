@@ -11,7 +11,7 @@ description = "Per-tenant append-only hash chains for the Tessera kernel: SHA-25
 workspace = true
 
 [dependencies]
-tessera-ids = { path = "../ids" }
+tessera-ids = { path = "../ids", version = "0.1.0" }
 sha2.workspace = true
 thiserror.workspace = true
 

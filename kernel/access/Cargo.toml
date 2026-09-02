@@ -11,7 +11,7 @@ description = "Pure five-layer permission engine for the Tessera kernel: deny wi
 workspace = true
 
 [dependencies]
-tessera-ids = { path = "../ids" }
+tessera-ids = { path = "../ids", version = "0.1.0" }
 thiserror.workspace = true
 
 [dev-dependencies]
