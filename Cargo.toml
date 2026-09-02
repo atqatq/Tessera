@@ -17,7 +17,7 @@ authors = ["The Tessera Project"]
 # justification recorded here and in THIRD_PARTY_LICENSES.md (Part A5).
 thiserror = "2.0"      # prescribed by A4: typed errors for libraries
 proptest = "1.7"       # prescribed by A2: property-based invariants
-sha2 = "0.10"          # prescribed by Part 0.4/0.8: audited SHA-256, never hand-rolled
+sha2 = "0.11"          # prescribed by Part 0.4/0.8: audited SHA-256, never hand-rolled
 serde_json = "1.0"     # conformance-vector consumption in tests only
 
 [workspace.lints.rust]
