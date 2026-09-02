@@ -22,7 +22,7 @@ jobs:
         run: |
           rustup toolchain install 1.98.0 --profile minimal
           rustup default 1.98.0
-      - uses: Swatinem/rust-cache@98c8021b550208e191a6a3145459bfc9fb29c4c0 # v2.8.0
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - uses: taiki-e/install-action@0758d235715de2f3551eacc980d9ae8fce9342c3 # v2
         with:
           tool: cargo-mutants
