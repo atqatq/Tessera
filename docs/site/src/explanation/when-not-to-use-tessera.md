@@ -47,5 +47,5 @@ opinionated core will be a straightjacket, not a foundation.
 
 If any of the "not yet" items matches your need, watch the roadmap —
 or better, run the [test suite](../tutorials/first-suite.md), read the
-[ADRs](adr/index.md), and tell the project which constraint is wrong.
+[ADRs](../adr/index.md), and tell the project which constraint is wrong.
 That is what the RFC process is for.
