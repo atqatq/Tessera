@@ -76,7 +76,10 @@ jobs:
       - name: DCO 1.1 sign-off present on all commits
         run: |
           missing=0
-          for sha in $(git rev-list origin/main..HEAD 2>/dev/null || git rev-list HEAD --not --remotes=origin); do
+          # --no-merges: on pull_request, HEAD is GitHub's auto-generated
+          # merge commit, which by definition carries no sign-off. The
+          # commits under test are the branch commits, not that merge.
+          for sha in $(git rev-list --no-merges origin/main..HEAD 2>/dev/null || git rev-list --no-merges HEAD --not --remotes=origin); do
             if ! git log -1 --format='%(trailers:key=Signed-off-by)' "$sha" | grep -q '.'; then
               echo "commit $sha is missing a Signed-off-by trailer"
               missing=1
