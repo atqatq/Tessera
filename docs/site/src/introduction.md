@@ -30,5 +30,5 @@ separates schedule from intent.
 - New to the code: [your first passing suite](tutorials/first-suite.md).
 - Want to know whether this is for you: [why Tessera](explanation/why-tessera.md)
   and, more importantly, [when not to use Tessera](explanation/when-not-to-use-tessera.md).
-- Evaluating trust: the [ADR index](adr/README.md) and the
+- Evaluating trust: the [ADR index](adr/index.md) and the
   [invariant → test map](TESTING.md).
