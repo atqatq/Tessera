@@ -221,10 +221,7 @@ mod tests {
         // the pin: the rendered form is exactly the wrapped millisecond
         // value, with no decoration and no silent empty render.
         assert_eq!(EpochMs::new(0).to_string(), "0");
-        assert_eq!(
-            EpochMs::new(1_700_000_000_000).to_string(),
-            "1700000000000"
-        );
+        assert_eq!(EpochMs::new(1_700_000_000_000).to_string(), "1700000000000");
     }
 
     #[test]

@@ -18,3 +18,4 @@ mutants.out*/
 docs/site/book/
 # vhs recordings
 .vhs/
+*.egg-info/
