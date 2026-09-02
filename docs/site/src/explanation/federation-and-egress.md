@@ -81,7 +81,7 @@ without the GS1 identifier set:
   same dead-letter discipline (unparsable segments are quarantined,
   never dropped). Mapping sets are versioned configuration, because a
   partner's EDI dialect is structure — and structure is configurable
-  ([OPERATOR_MODEL](../../OPERATOR_MODEL.md)) — not method.
+  ([docs/OPERATOR_MODEL.md](https://github.com/atqatq/Tessera/blob/main/docs/OPERATOR_MODEL.md)) — not method.
 - **GS1 identifiers** — GTIN (products), GLN (locations/parties), SSCC
   (logistic units) are the identity layer for anything crossing a
   boundary. Tessera's internal identifiers stay typed and internal;
